@@ -1,0 +1,133 @@
+#!/usr/bin/env bash-toolbox
+#$ Usage: btack [-f] [STACK_FILE] [STACK_NAME] ...
+#$        btack [STACK_NAME] ...
+#$        btack [OPTIONS] ...
+#$
+#$ Make a specific stack of commands invoking by name.
+#$
+#$ Options:
+#$   -f   Specified a stack file.
+#$   -l   List stack descriptions.
+#$   -h   Display this message.
+#$   -v   Display version.
+#$
+
+#: btack(1) -- bash-toolbox stack
+#: ==============================
+#:
+#: ## SYNOPSIS
+#:
+#: `btack` [-f] [STACK_FILE] [STACK_NAME] ...
+#: `btack` [STACK_NAME] ...
+#: `btack` [OPTIONS] ...
+#:
+#: ## DESCRIPTION
+#:
+#: This script application should be used to handle stack commands defined
+#: `Stackfile` or `stackfile`.
+#:
+#: This application handle _Stackfiles_. Example of the _Stackfile_ contents:
+#:
+#:     = Build homepage and documentation
+#:       : Creating homepage and documentation directories
+#:         + mkdir -p homepage/doc/api
+#:       : Building API
+#:         + markdown doc/api.mkd -o homepage/doc/api/index.html
+#:       : Building documentation
+#:         + markdown README.mkd -o homepage/index.html
+#:         + markdown doc/faq.mkd -o homepage/doc/faq.html
+#:         + markdown doc/howto.mkd -o homepage/doc/howto.html
+#:
+#: You can perform all commands using `btack`. The output will like this:
+#:
+#:     * Creating homepage and documentation directories                               
+#:       > mkdir -p homepage/doc/api                                            [ done]
+#:     * Building API                                                                  
+#:       > maruku doc/api.mkd -o homepage/doc/api/index.html                    [ done]
+#:       > maruku lib/bash-toolbox/base.sh -o homepage/doc/api/base.sh          [ done]
+#:     * Building documentation                                                        
+#:       > maruku README.mkd -o homepage/index.html                             [ done]
+#:       > maruku doc/faq.mkd -o homepage/doc/faq.html                          [ done]
+#:       > maruku doc/howto.mkd -o homepage/doc/howto.html                      [ done]
+#: 
+#: ## AUTHOR
+#:
+#: Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#:
+#: Timestamp
+#: : 2010-01-08 17:59:17 -04:00
+#:
+#: ## COPYRIGHT
+#:
+#: Copyright (C) 2009-2010 Codigorama &lt;code@codigorama.com&gt;
+#:
+
+source btack.sh
+
+function list {
+  test "${stack_descriptions[*]}" && {
+    echo "Stacks found"
+    for i in ${!stack_descriptions[@]}; do
+      printf "  %02d: %-72s\n" ${i} "${stack_descriptions[i]}"
+      i=i+1
+    done
+  } || {
+    echo "No stacks defined"
+  }
+
+  return 0
+}
+
+function stacks {
+  declare -a stacks=${!stack_descriptions[@]}
+
+  test ${#} -gt 0 && stacks=${@}
+
+  for item in ${stacks}; do
+    defined ${item} && {
+      dump "${item}"
+    } || {
+      fail "stack item not defined: '${stack}'"
+      fail "stack item is required, try '-l' to list all itens in stack"
+    }
+  done
+
+  return 0
+}
+
+function btack {
+
+  while getopts ":f:lhvd" option; do
+    case ${option} in
+      f ) stack_file=${OPTARG} ;;
+      l ) list=yes ;;
+      h ) usage && exit 0 ;;
+      v ) usage && exit 0 ;;
+      : ) fail "argument is required" && exit 1 ;;
+      - ) shift $((${OPTIND} - 1)); break ;;
+      * ) fail "invalid argument '${OPTARG}', try -h for usage."; exit 1 ;;
+    esac
+  done
+
+  shift $((${OPTIND} - 1))
+
+  test -z "${stack_file}" && {
+    fail "file of stacks not found"
+    exit 1
+  }
+
+  source ${stack_file}
+
+  test ${list} && list && return 0
+
+  test ${#} -gt 0 && stacks ${@} || stacks
+
+  return 0
+}
+
+btack ${@}
+
+exit 0
+
+# vim: filetype=sh
+
