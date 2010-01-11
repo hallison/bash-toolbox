@@ -1,0 +1,49 @@
+#!/usr/bin/env bash-toolbox
+#$ Usage: btdoc [SCRIP_FILE] [OUTPUT]
+#$
+#$ Build Markdown documentation from source file comments.
+#$
+
+#: btdoc(1) -- bash-toolbox documentation
+#: ======================================
+#:
+#: ## SYNOPSIS
+#:
+#: btdoc [SCRIP_FILE] [OUTPUT] ...
+#:
+#: ## DESCRIPTION
+#:
+#: TODO
+#:
+#: Timestamp
+#: : 2010-01-11 13:11:39 -04:00
+#:
+#: ## AUTHOR
+#:
+#: Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#:
+#: ## COPYRIGHT
+#:
+#: Copyright (c) 2009-2010 Codigorama &lt;code@codigorama.com&gt;
+#:
+
+source btdoc.sh
+
+function parse {
+  declare origin=${1:?"origin source is required"}
+  test "${2}" && srcdoc ${origin} > ${2} || srcdoc ${origin}
+  return 0
+}
+
+function btdoc {
+  case ${1} in
+    -h ) usage ; exit 0;;
+    -* ) fail "invalid option '${1}', try '-h' for help."; exit 1 ;;
+    *  ) parse ${@} ;;
+  esac
+  return 0
+}
+
+btdoc ${@}
+
+# vim: filetype=sh
