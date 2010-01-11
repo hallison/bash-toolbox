@@ -1,4 +1,5 @@
 alias btdoc='./bin/btdoc'
+alias ron='ron -br5 --manual="Bash-Toolbox Manual" --organization="Bash-Toolbox"'
 
 = Build homepage and documentation
   : Creating homepage and documentation directories
@@ -6,25 +7,25 @@ alias btdoc='./bin/btdoc'
     + mkdir -p homepage/man
     + mkdir -p homepage/doc/api
   : Building manpages and htdocs for applications
-    + ron -b --html README.mkd tmp/man/bash-toolbox.7
     for app in bin/*; do
       + btdoc ${app} tmp/man/${app##*/}
-      + ron -b --html tmp/man/${app##*/}
+      + ron tmp/man/${app##*/}
       + mv tmp/man/${app##*/}*.html homepage/man
     done
   : Building manpages and htdocs for libraries
     for src in lib/bash-toolbox/*.sh; do
       + btdoc ${app} tmp/man/${app##*/}
-      + ron -b --html tmp/man/${app##*/}
+      + ron tmp/man/${app##*/}
       + mv tmp/man/${app##*/} homepage/man
     done
     for src in lib/bash-toolbox/cli/*.sh; do
       + btdoc ${app} tmp/man/${app##*/}
-      + ron -b --html tmp/man/${app##*/}
+      + ron tmp/man/${app##*/}
       + mv tmp/man/${app##*/} homepage/man
     done
   : Building index for homepage
-    + maruku README.mkd -o homepage/index.html
+    + ron README.mkd
+    + mv README.html homepage/index.html
 
 = Push news to remote repositories
   hosts=(github codaset)

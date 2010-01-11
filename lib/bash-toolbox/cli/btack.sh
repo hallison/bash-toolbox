@@ -1,5 +1,5 @@
-#: bttack(1) -- bash-toolbox stack commands
-#: ========================================
+#: btack(3) -- bash-toolbox stack commands
+#: =======================================
 #:
 #: ## SYNOPSIS
 #:
