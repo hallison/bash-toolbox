@@ -33,8 +33,8 @@ declare -x stack_file="${stack_file:-[Ss]tackfile}"
 # Formats
 #declare  STACK_COMMAND="${STACK_COMMAND:-'* %-74s [busy]\\e[5D\\n'}"
 #declare  STACK_COMMAND="${STACK_COMMAND:-\e[G* %-72s [%03d/%03d]}"
-declare  STACK_COMMAND="${STACK_COMMAND:-  > %-68s [%5s]\e[6D}"
-declare  STACK_STATUS="${STACK_STATUS:-* %-78s\n}"
+declare  STACK_COMMAND="${STACK_COMMAND:-  > %-66s [%5s]\e[6D}"
+declare  STACK_STATUS="${STACK_STATUS:-* %-76s\n}"
 
 # Aliases
 alias no-errors='test ! "${stack_errors[*]}"'
@@ -109,10 +109,10 @@ function dump {
       eval "command=\${${stack}[${i}]}"
       eval "n=\${#${stack}[@]}"
       test "${command%%:*}" == "stack_status" && {
-        printf "${STACK_STATUS}" "${command:13:78}"
+        printf "${STACK_STATUS}" "${command:13:76}"
       } || {
         status="busy"
-        printf "${STACK_COMMAND}" "${command:0:70}" "${status}"
+        printf "${STACK_COMMAND}" "${command:0:66}" "${status}"
         pop ${command}
         test ${stack_return} -gt 0 && status="error" || status="done"
         printf "%5s\n" "${status}"

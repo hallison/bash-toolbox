@@ -1,5 +1,6 @@
 #!/usr/bin/env bash-toolbox
 #$ Usage: btdoc [SCRIP_FILE] [OUTPUT]
+#$        btdoc [OPTIONS]
 #$
 #$ Build Markdown documentation from source file comments.
 #$
