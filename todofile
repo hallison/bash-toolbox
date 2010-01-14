@@ -40,20 +40,12 @@ alias ron='ron -br5 --manual="Bash-Toolbox Manual" --organization="Bash-Toolbox"
 
 = Push news to remote repositories
 
-  hosts=(github codaset)
+  hosts=(github fork codaset)
 
   : Pushing news to ${hosts[@]}
     for remote in ${hosts[@]}; do
       + git push ${remote} news
     done
-
-#= Push a new release from master branch
-#  @ tagged
-#  hosts=(git remote)
-#  : Releasing to ${hosts[@]}
-#    for remote in ${@}; do
-#      + git push --tags master ${remote}
-#    done
 
 # vim: filetype=bash,toolbox
 
