@@ -54,9 +54,9 @@ desc news "Push a new release from master branch"
 task news {
   hosts="origin github fork codaset"
 
-  status "Releasing to hosts"
+  status "Pushing news to hosts"
   for remote in ${hosts}; do
-    run git push --tags master ${remote}
+    run git push ${remote} news
   done
 }
 

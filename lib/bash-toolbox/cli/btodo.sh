@@ -112,7 +112,7 @@ function dump {
       eval "command=\${${todo}[${i}]}"
       eval "n=\${#${todo}[@]}"
       test "${command%%:*}" == "status" && {
-        printf "\n${TODO_STATUS}" "${command:7:76}"
+        printf "${TODO_STATUS}" "${command:7:76}"
       } || {
         status="busy"
         printf "${TODO_COMMAND}" "${command:0:66}" "${status}"
