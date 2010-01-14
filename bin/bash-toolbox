@@ -29,6 +29,12 @@
 #:   Array that contains major, minor, patch and build respectively version
 #:   information.
 #:
+#: ### Applications
+#:
+#: * `btake`, bash-toolbox make.
+#: * `btdoc`, bash-toolbox documentation.
+#: * `btodo`, bash-toolbox todo runner.
+#:
 #: ## AUTHOR
 #:
 #: Written by Hallison Batista &lt;hallison@codigorama.com&gt;
@@ -59,6 +65,10 @@
 #:
 #: [bash-toolbox(7)](bash-toolbox.7.html), [base(3)](base.3.html),
 #: [bake(1)](bake.1.html), [bdoc(1)](bdoc.1.html), [bert(1)](bert.1.html)
+#:
+#: ## SEE ALSO
+#:
+#: `btake(1)`, `btdoc(1)`, `btodo(1)`
 #:
 
 shopt -s sourcepath
