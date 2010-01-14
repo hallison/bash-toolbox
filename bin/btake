@@ -1,0 +1,140 @@
+#!/usr/bin/env bash-toolbox
+#$ Usage: btake [-f] [TASK_FILE] [TASK_NAME] ...
+#$        btake [TASK_NAME] ...
+#$        btake [OPTIONS] ...
+#$
+#$ Make a specific task invoking by name.
+#$
+#$ Options:
+#$   -f   Load task file.
+#$   -l   List task descriptions.
+#$   -n   List task names.
+#$   -h   Display this message.
+#$   -v   Display version.
+#$
+
+#: btake(1) -- bash-toolbox make
+#: =============================
+#:
+#: ## SYNOPSIS
+#:
+#: `btake` [-f] [TASK_FILE] [TASK_NAME] ...<br/>
+#: `btake` [TASK_NAME] ...<br/>
+#: `btake` [OPTIONS]
+#:
+#: ## DESCRIPTION
+#:
+#: A lightweight build automation like GNU/Make and Rake. It is a Syntactic
+#: sugar based which use Bash.
+#:
+#: This script application should be used to handle tasks defined
+#: `Taskfile` or `taskfile`.
+#:
+#: ## OPTIONS
+#:
+#: * `-f`:
+#:   Load task file.
+#:
+#: * `-l`:
+#:   List task descriptions. Use this option when you need remember the task
+#:   name and goal.
+#:
+#: * `-n`:
+#:    List task names.
+#:
+#: * `-h`:
+#:   Display this message.
+#:
+#: * `-v`:
+#:   Display version.
+#:
+#: ## AUTHOR
+#:
+#: Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#:
+#: Timestamp
+#: : 2010-01-08 17:59:17 -04:00
+#:
+#: ## COPYRIGHT
+#:
+#: Copyright (C) 2009-2010 Codigorama &lt;code@codigorama.com&gt;
+#:
+#: ## SEE ALSO
+#:
+#: `btake(7)`, `btodo(1)`
+#:
+
+source btake.sh
+
+function list {
+  test "${task_names[*]}" && {
+    test "${list}" == "all" && {
+      echo "Tasks found"
+      for i in ${!task_names[@]}; do
+        printf "* %-32s: %-42s\n" "${task_names[i]}" "${task_descriptions[i]}"
+      done
+    } || {
+      declare names="${task_names[*]}"
+      echo "${names// /\n}"
+    }
+  } || {
+    echo "No tasks defined"
+  }
+
+  return 0
+}
+
+function tasks {
+  for task in ${@}; do
+    defined ${task} && {
+      invoke ${task}
+    } || {
+      fail "task '${task}' not defined"
+      fail "task name is required, try '-l' to list all tasks"
+    }
+  done
+
+  return 0
+}
+
+function btake {
+
+  while getopts ":f:lnhvd" option; do
+    case ${option} in
+      f ) task_file=${OPTARG} ;;
+      l ) list=all ;;
+      n ) list=names ;;
+      h ) usage && exit 0 ;;
+      v ) usage && exit 0 ;;
+      : ) fail "argument is required" && exit 1 ;;
+      * ) fail "invalid argument '${OPTARG}', try -h for usage."; exit 1 ;;
+    esac
+  done
+
+  shift $((${OPTIND} - 1))
+
+  test -z "${task_file}" && {
+    fail "task file not found"
+    exit 1
+  }
+
+  source ${task_file}
+
+  test ${list} && list && return 0
+
+  test ${#} -gt 0 && {
+    tasks ${@}
+  } || {
+    usage
+    return 0
+  }
+
+  return 0
+}
+
+btake ${@}
+
+exit 0
+
+# vim: filetype=sh
+
