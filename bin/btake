@@ -86,14 +86,13 @@ function list {
 
 function tasks {
   for task in ${@}; do
-    defined ${task} && {
+    if defined ${task}; then
       invoke ${task}
-    } || {
+    else
       fail "task '${task}' not defined"
       fail "task name is required, try '-l' to list all tasks"
-    }
+    fi
   done
-
   return 0
 }
 

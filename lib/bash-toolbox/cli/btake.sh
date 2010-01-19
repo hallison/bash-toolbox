@@ -1,5 +1,5 @@
-#: btake(3) -- bash-toolbox make
-#: =============================
+#: bash-make(3) -- bash-toolbox make
+#: =================================
 #:
 #: ## SYNOPSIS
 #:
@@ -24,6 +24,8 @@
 #: Copyright (C) 2009-2010 Codigorama &lt;code@codigorama.com&gt;
 #:
 
+declare TMP=${TMP:-/tmp}
+
 # Variables for tasks
 declare -a task_names=()
 declare -a task_descriptions=()
@@ -36,6 +38,8 @@ declare -x task_file="${task_file:-[Tt]askfile}"
 #declare  TASK_COMMAND="${TASK_COMMAND:-\e[G* %-72s [%03d/%03d]}"
 declare  TASK_COMMAND="${TASK_COMMAND:-  > %-66s [%5s]\e[6D}"
 declare  TASK_STATUS="${TASK_STATUS:-* %s\n}"
+declare  TASK_ERROR="${TASK_ERROR:-    %02d: %-8s: %03d : %-44s\n}"
+declare  TASK_ERRORS_PATH=${TMP}/${BASH_SOURCE##*/}.errors
 
 # Aliases
 alias      task='function'
@@ -69,26 +73,44 @@ function status {
 # Run commands redirecting output to null
 function run {
   test ${#} -gt 0 && {
-    declare new=${#task_errors[@]}
-    declare status="busy"
+    declare    new=${#task_errors[@]}
+    declare    format="%5s\n"
+    declare    status="busy"
+    declare -a command=()
+
+    for arg in "${@}"; do
+      cmd=${#command[@]}
+      [[ ${arg} =~ ' ' ]] && command[cmd]="'${arg}'" || command[cmd]="${arg}"
+    done
 
     cursor --turn-off
 
-    printf "${TASK_COMMAND}" "${*}" "${status}"
-    eval "${@# } &> /dev/null"
+    printf "${TASK_COMMAND}" "${command[*]:0:66}" "${status}"
+
+    "${command[@]}" &> ${TASK_ERRORS_PATH}.${new}
+
     task_return=${?}
 
     test ${task_return} -eq 0 && {
       status="done"
+      printf "${format}" "${status}"
     } || {
-      task_errors[new]=${task_return}
+      local error="$(1<${TASK_ERRORS_PATH}.${new})"
       status="error"
+      printf "${format}" "${status}"
+      task_errors[new]="${command[0]} ${task_return}"
+      printf "${TASK_ERROR}" ${new} ${task_errors[new]} "${error##*:}"
     }
     #printf "${TASK_COMMAND}\n" "${*}" "${status}"
-    printf "%5s\n" "${status}"
     cursor --turn-on
   }
   return ${task_return}
+}
+
+function errors {
+  local error=${1}
+  error="$(1<${TASK_ERRORS_PATH}.${i})"
+  printf "${TASK_ERROR}" ${i} ${task_errors[i]} "${error##*:}"
 }
 
 # Invoke a task
@@ -97,12 +119,13 @@ function invoke {
   declare namespace=${task%%:*}
   test "${namespace}" != "${task}" && ${namespace}
   ${task}
+  errors
 }
 
 # Check if a task was defined
 function defined {
   for i in ${!task_names[@]}; do
-    test "${task_names[i]}" == "${1}" && return 0 || continue
+    test "${task_names[i]}" == "${1}" && return 0
   done
   return 1
 }
