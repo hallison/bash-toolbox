@@ -68,7 +68,7 @@
 #:
 #: ## SEE ALSO
 #:
-#: `btake(1)`, `btdoc(1)`, `btodo(1)`
+#: `bake(1)`, `bdoc(1)`, `cmdown(1)`
 #:
 
 shopt -s sourcepath
