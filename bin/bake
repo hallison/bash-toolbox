@@ -134,6 +134,7 @@ function bake {
       * ) fail "invalid argument '${OPTARG}', try -h for usage."; return 1 ;;
     esac
   done
+
   shift $((${OPTIND} - 1))
 
   test -z "${task_file}" && {
