@@ -56,6 +56,12 @@ task install {
     }
   done
 
+  status "Copying shared files"
+  for src in share/* share/*/* share/*/*/*; do
+    test -d ${src} && run mkdir -p ${PREFIX}/${src}
+    test -f ${src} && run cp -p ${src} ${PREFIX}/${src}
+  done
+
   status "Copying binaries"
   run install -d ${PREFIX}/bin
   for bin in bin/*; do
