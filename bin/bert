@@ -1,0 +1,162 @@
+#!/usr/bin/env bash-toolbox
+#$ Usage: bert [FILE] [CMD_INDEX] ...
+#$        bert [FILE] [OPTIONS] ...
+#$
+#$ Make a specific stack of commands invoking by name.
+#$
+#$ Options:
+#$   -t   List table of content of the command titles.
+#$   -h   Display this message.
+#$   -v   Display version.
+#$
+
+#: bert(1) -- Bash-Toolbox Command Convert
+#: =======================================
+#:
+#: ## SYNOPSIS
+#:
+#: `bert` [FILE] [CMD_INDEX] ...  
+#: `bert` [FILE] [OPTIONS] ...  
+#:
+#: ## DESCRIPTION
+#:
+#: `bert` handle command lists defined in a file and run.
+#:
+#: Example of the  contents:
+#:
+#:     = Build homepage and documentation
+#:
+#:       : Creating homepage and documentation directories
+#:         + mkdir -p homepage/doc/api
+#:
+#:       : Building API
+#:         + markdown doc/api.mkd -o homepage/doc/api/index.html
+#:
+#:       : Building documentation
+#:         + markdown README.mkd -o homepage/index.html
+#:         + markdown doc/faq.mkd -o homepage/doc/faq.html
+#:         + markdown doc/howto.mkd -o homepage/doc/howto.html
+#:
+#: ## OPTIONS
+#:
+#: * `-t`:
+#:   List table of content of the command titles.
+#:
+#: * `-h`:
+#:   Display this message.
+#:
+#: * `-v`:
+#:   Display version.
+#:
+#: ## AUTHOR
+#:
+#: Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#:
+#: ## COPYRIGHT
+#:
+#: Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+#:
+#: Permission is hereby granted, free of charge, to any person obtaining a copy
+#: of this software and associated documentation files (the "Software"), to deal
+#: in the Software without restriction, including without limitation the rights
+#: to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#: copies of the Software, and to permit persons to whom the Software is
+#: furnished to do so, subject to the following conditions:
+#: 
+#: The above copyright notice and this permission notice shall be included in
+#: all copies or substantial portions of the Software.
+#: 
+#: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#: IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#: FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#: AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#: LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#: OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#: THE SOFTWARE.
+#:
+#: ## SEE ALSO
+#:
+#: [bash-toolbox(1)](bash-toolbox.1.html), [bert(3)](bert.3.html),
+#: [bert(5)](bert.5.html), [bake(1)](bake.1.html)
+#:
+
+# Timestamp: 2010-01-08 17:59:17 -04:00
+
+include ${BASH_TOOLBOX_CLI}
+
+source bert.sh
+
+function toc {
+  test "${command_titles[*]}" && {
+    for i in ${!command_titles[@]}; do
+      printf "%02d: %-72s\n" ${i} "${command_titles[i]}"
+    done
+  } || {
+    echo "No command list defined"
+  }
+
+  return 0
+}
+
+function runcmd {
+  declare -a cmdlist=${!command_titles[@]}
+
+  test ${#} -gt 0 && cmdlist=${@}
+
+  for item in ${cmdlist}; do
+    defined ${item} && {
+      dump "${item}"
+    } || {
+      fail "command item not defined: '${item}'"
+      fail "command item is required, try '-l' to list all itens in command list"
+    }
+  done
+
+  return 0
+}
+
+function bert {
+  test -z "${1}" && {
+    usage
+    return 0
+  }
+
+  if test -f ${1}; then
+    command_file=${1}
+    shift
+  #else
+  #  fail "enable to load file '${1}'"
+  #  return 1
+  fi
+
+  while getopts ":thvd" option; do
+    case ${option} in
+      t ) toc=yes ;;
+      h ) usage && return 0 ;;
+      v ) usage && return 0 ;;
+      : ) fail "argument is required" && return 1 ;;
+      - ) shift $((${OPTIND} - 1)); break ;;
+      * ) fail "invalid argument '${OPTARG}', try -h for usage."; return 1 ;;
+    esac
+  done
+
+  shift $(( ${OPTIND} - 1 ))
+
+  test "${command_file}" && {
+    source ${command_file}
+  } || {
+    usage
+    return 1
+  }
+
+  test "${toc}" && toc && return 0
+
+  runcmd ${@}
+
+  return 0
+}
+
+bert ${@}
+
+# vim: filetype=sh
+

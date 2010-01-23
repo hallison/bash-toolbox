@@ -1,0 +1,26 @@
+function writepath {
+  for src in ${@}; do
+    if test -d ${src}; then
+      writepath ${src}/*
+    else
+      echo "${src}" >> ${MANIFEST_FILE}
+      run : "${src}"
+    fi
+  done
+}
+
+desc manifest "Create/update manifest file"
+task manifest {
+  local IFS=${IFS}:
+  MANIFEST_PATH="${MANIFEST_PATH:-bin:lib:share}"
+  MANIFEST_FILE="${MANIFEST_FILE:-Manifest}"
+  MANIFEST=()
+  test -f ${MANIFEST_FILE} && rm ${MANIFEST_FILE}
+  for src in ${MANIFEST_PATH}; do
+    status "Writing files in '${src}'"
+    writepath ${src}/*
+  done
+  MANIFEST=($(readfile ${MANIFEST_FILE}))
+}
+
+# vim: filetype=sh

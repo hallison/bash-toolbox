@@ -1,0 +1,4 @@
+.*.sw[p-z]
+*.html
+*.tmp
+tmp/*

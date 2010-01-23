@@ -1,0 +1,158 @@
+#!/usr/bin/env bash-toolbox
+#$ Usage: bake [-f] [BAKEFILE] [TASK] ...
+#$        bake [TASK] ...
+#$        bake [OPTIONS] ...
+#$
+#$ Make a specific task invoking by name.
+#$
+#$ Options:
+#$   -f   Load task file.
+#$   -l   List task descriptions.
+#$   -n   List task names.
+#$   -h   Display this message.
+#$   -v   Display version.
+#$
+
+#: bake(1) -- Bash-Toolbox Make
+#: ============================
+#:
+#: ## SYNOPSIS
+#:
+#: `bake` [-f] [TASK_FILE] [TASK_NAME] ...  
+#: `bake` [TASK_NAME] ...  
+#: `bake` [OPTIONS] ...  
+#:
+#: ## DESCRIPTION
+#:
+#: A lightweight build automation like GNU/Make and Rake. It is a Syntactic
+#: sugar based which use Bash.
+#:
+#: This script application should be used to handle tasks defined
+#: `Bakefile` or `bakefile`.
+#:
+#: ## OPTIONS
+#:
+#: * `-f`:
+#:   Load task file instead the default Bakefile.
+#:
+#: * `-l`:
+#:   List task descriptions. Use this option when you need remember the task
+#:   name and goal.
+#:
+#: * `-n`:
+#:    List task names.
+#:
+#: * `-h`:
+#:   Display this message.
+#:
+#: * `-v`:
+#:   Display version.
+#:
+#: ## AUTHOR
+#:
+#: Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#:
+#: ## COPYRIGHT
+#:
+#: Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+#:
+#: Permission is hereby granted, free of charge, to any person obtaining a copy
+#: of this software and associated documentation files (the "Software"), to deal
+#: in the Software without restriction, including without limitation the rights
+#: to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#: copies of the Software, and to permit persons to whom the Software is
+#: furnished to do so, subject to the following conditions:
+#: 
+#: The above copyright notice and this permission notice shall be included in
+#: all copies or substantial portions of the Software.
+#: 
+#: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#: IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#: FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#: AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#: LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#: OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#: THE SOFTWARE.
+#:
+#: ## SEE ALSO
+#:
+#: [bash-toolbox(1)](bash-toolbox.1.html), [bake(3)](bake.3.html),
+#: [bake(5)](bake.5.html), [bake(7)](bake.7.html), [bert(1)](bert.1.html)
+#:
+
+# Timestamp: 2010-01-08 17:59:17 -04:00
+
+include ${BASH_TOOLBOX_CLI}
+
+source bake.sh
+
+# List all tasks.
+function list {
+  if test "${task_names[*]}"; then
+    if test "${list}" == "all"; then
+      for i in ${!task_names[@]}; do
+        printf "%s\n    %-74s\n\n" "${task_names[i]}" "${task_descriptions[i]}"
+      done
+    else
+      declare names="${task_names[*]}"
+      echo "${names// /\n}"
+    fi
+  else
+    echo "No tasks defined"
+  fi
+  return 0
+}
+
+# Invoke all tasks.
+function tasks {
+  for task in ${@}; do
+    if defined ${task}; then
+      invoke ${task}
+    else
+      fail "task '${task}' not defined"
+      fail "task name is required, try '-l' to list all tasks"
+      return 1
+    fi
+  done
+  return 0
+}
+
+# Main function.
+function bake {
+  while getopts ":f:lnhvd" option; do
+    case ${option} in
+      f ) task_file=${OPTARG} ;;
+      l ) list=all ;;
+      n ) list=names ;;
+      h ) usage && return 0 ;;
+      v ) usage && return 0 ;;
+      : ) fail "argument is required" && return 1 ;;
+      * ) fail "invalid argument '${OPTARG}', try -h for usage."; return 1 ;;
+    esac
+  done
+
+  shift $((${OPTIND} - 1))
+
+  test -z "${task_file}" && {
+    fail "task file not found"
+    return 1
+  }
+
+  source ${task_file}
+
+  test ${list} && list && return 0
+
+  test ${#} -gt 0 && {
+    tasks ${@}
+  } || {
+    usage
+    return 0
+  }
+
+  return 0
+}
+
+bake ${@}
+
+# vim: filetype=sh
+

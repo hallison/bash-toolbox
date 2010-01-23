@@ -1,0 +1,49 @@
+alias btdoc='./bin/bdoc'
+alias ron='ron -br5 --manual="Bash-Toolbox Manual" --organization="Bash-Toolbox"'
+
+= Build homepage and documentation
+
+  - Cleaning temporary files
+    + rm -rf tmp/
+    + rm -rf homepage/
+
+  - Creating homepage and documentation directories
+    + mkdir -p tmp/man
+    + mkdir -p homepage/man
+
+  - Build manpages session 1 - applications
+    for app in bin/*; do
+      + bdoc ${app} tmp/man/${app##*/}.1.mkd
+      + ron tmp/man/${app##*/}.1.mkd
+    done
+
+  - Build manpages session 3 - libraries
+    for lib in lib/bash-toolbox/*.sh lib/bash-toolbox/cli/*.sh; do
+      mkd=${lib%.sh}
+      mkd=${mkd##*/}
+      + bdoc ${lib} tmp/man/${mkd}.3.mkd
+      + ron tmp/man/${mkd}.3.mkd
+    done
+
+  - Build manpages session 5 - formats and conventions
+    for doc in man/*.5.mkd; do
+      mkd=${doc##*/}
+      + cp ${doc} tmp/man/${mkd}
+      + ron tmp/man/${mkd}
+    done
+
+  - Build manpages session 7 - miscelaneous
+    + cp README.mkd tmp/man/bash-toolbox.7.mkd
+    + ron tmp/man/bash-toolbox.7.mkd
+
+  - Building index for homepage
+    + cp README.mkd tmp/man/index.mkd
+    + ron tmp/man/index.mkd
+
+  - Move HTML files to homepage
+    for html in tmp/man/*.html; do
+      + mv ${html} homepage/man
+    done
+
+# vim: filetype=sh
+

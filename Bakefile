@@ -1,0 +1,47 @@
+PREFIX=${PREFIX:-/usr/local}
+
+source version.bk
+source manifest.bk
+
+desc news "Push new changes to hosts"
+task news {
+  hosts="github fork codaset gitorious"
+
+  status "Pushing news to hosts: ${hosts// /, }"
+  for remote in ${hosts}; do
+    run git push ${remote} news
+  done
+}
+
+desc release "Push a new release and all tags"
+task release {
+  hosts="$(git remote)"
+
+  status "Pushing master branch to hosts: ${hosts// /, }"
+  for remote in ${hosts}; do
+    run git push --tags ${remote} master
+  done
+}
+
+desc install "Install Bash-Toolbox in ${PREFIX}"
+task install {
+  status "Copying libraries"
+  for lib in lib/* lib/*/* lib/*/*/*; do
+    test -d ${lib} && run mkdir -p ${PREFIX}/${lib}
+    test -f ${lib} && run cp -p ${lib} ${PREFIX}/${lib}
+  done
+
+  status "Copying shared files"
+  for src in share/* share/*/* share/*/*/*; do
+    test -d ${src} && run mkdir -p ${PREFIX}/${src}
+    test -f ${src} && run cp -p ${src} ${PREFIX}/${src}
+  done
+
+  status "Copying binaries"
+  run mkdir -p ${PREFIX}/bin
+  for bin in bin/*; do
+    run cp -p ${bin} ${PREFIX}/${bin}
+  done
+}
+
+# vim: filetype=sh

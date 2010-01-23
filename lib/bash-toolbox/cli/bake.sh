@@ -1,0 +1,190 @@
+#: bake(3) -- bash-toolbox make
+#: ============================
+#:
+#: ## SYNOPSIS
+#:
+#: `#!/usr/bin/env bash-toolbox`
+#: `source bake.sh`
+#:
+#: ## DESCRIPTION
+#:
+#: This script should be used as library in source script file or into
+#: Bash sessions. The goal is implements a lightweight interface to create
+#: a task and build manager with syntax suggar.
+#:
+#: ## AUTHOR
+#:
+#: Written by Hallison Batista &lt;hallison@codigorama.com$gt;
+#:
+#: ## COPYRIGHT
+#:
+#: Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+#:
+#: Permission is hereby granted, free of charge, to any person obtaining a copy
+#: of this software and associated documentation files (the "Software"), to deal
+#: in the Software without restriction, including without limitation the rights
+#: to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#: copies of the Software, and to permit persons to whom the Software is
+#: furnished to do so, subject to the following conditions:
+#: 
+#: The above copyright notice and this permission notice shall be included in
+#: all copies or substantial portions of the Software.
+#: 
+#: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#: IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#: FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#: AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#: LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#: OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#: THE SOFTWARE.
+#:
+
+# Timestamp: 2010-01-11 17:40:25 -04:00
+
+# Global constants
+declare TMP=${TMP:-/tmp}
+#declare SRC=${BASH_SOURCE##*/}
+#declare LIB=${BASH_SOURCE%/*}/
+
+# Variables for tasks
+declare -a task_names=()
+declare -a task_descriptions=()
+declare    task_return=0
+declare -a task_errors=()
+declare -x task_file="${task_file:-[Bb]akefile}"
+
+# Formats
+#declare  TASK_COMMAND="${TASK_COMMAND:-'* %-74s [busy]\\e[5D\\n'}"
+#declare  TASK_COMMAND="${TASK_COMMAND:-\e[G* %-72s [%03d/%03d]}"
+declare  TASK_COMMAND="${TASK_COMMAND:-  > %-66s [%5s]\e[6D}"
+declare  TASK_STATUS="${TASK_STATUS:-* %s\n}"
+declare  TASK_ERROR="${TASK_ERROR:-    %02d: %-8s: %03d : %-44s\n}"
+declare  TASK_ERROR_FILE=${TMP}/${BASH_SOURCE##*/}.errors
+
+# Aliases
+alias     task='function'
+alias noerrors='test ! "${task_errors[*]}"'
+
+# Add name and description for a task.
+function desc {
+  declare name="${1:?task name is required}"; shift
+  declare desc="${*}"
+  declare  new=${#task_descriptions[@]}
+
+  task_names[new]="${name}"
+  task_descriptions[new]="${desc}"
+
+  #eval "task_${name//-/_}=()"
+}
+
+#   noerrors && {
+#     printf "%4s\n" $"done"
+#     return 0
+#   } || {
+#     printf "%4s\n" $"fail"
+#     return ${task_return}
+#   }'
+
+# Display a status message
+function status {
+  printf "${TASK_STATUS}" "${1}"
+}
+
+# Run commands redirecting output to null
+function run {
+  test ${#} -gt 0 && {
+    declare    new=${#task_errors[@]}
+    declare    format="%5s\n"
+    declare    status="busy"
+    declare -a command=()
+    declare    message=""
+
+    for arg in "${@}"; do
+      declare cmd=${#command[@]}
+      [[ ${arg} =~ ' ' ]] && command[cmd]="'${arg}'" || command[cmd]="${arg}"
+    done
+
+    message="${command[*]}"
+
+    cursor --turn-off
+
+    test ${#message} -gt 66 && message="${message:0:63}..."
+
+    printf "${TASK_COMMAND}" "${message:0:66}" "${status}"
+
+    "${command[@]}" &> ${TASK_ERROR_FILE}.${new}
+
+    task_return=${?}
+
+    if test ${task_return} -eq 0; then
+      status="done"
+      printf "${format}" "${status}"
+    else
+      local error="$(1<${TASK_ERROR_FILE}.${new})"
+      status="error"
+      printf "${format}" "${status}"
+      task_errors[new]="${command[0]} ${task_return}"
+      printf "${TASK_ERROR}" ${new} ${task_errors[new]} "${error##*:}"
+    fi
+    #printf "${TASK_COMMAND}\n" "${*}" "${status}"
+    cursor --turn-on
+  }
+  return ${task_return}
+}
+
+# TODO: remove this?
+function errors {
+  : "${1:?error index is required}"
+  local error="$(readfile ${TASK_ERROR_FILE}.${1})"
+  printf "${TASK_ERROR}" ${1} ${task_errors[1]} "${error##*:}"
+}
+
+# Invoke a task
+function invoke {
+  : ${1:?"task name is required"}
+
+  declare task="${1}"
+  declare namespace=${task%%:*}
+
+  rm ${TASK_ERROR_FILE}.*
+
+  test "${namespace}" != "${task}" && ${namespace}
+  ${task} || errors ${task_return}
+}
+
+# Check if a task was defined
+function defined {
+  for i in ${!task_names[@]}; do
+    test "${task_names[i]}" == "${1}" && return 0
+  done
+  return 1
+}
+
+# Define a task as default
+function default {
+  : "${1:?task name is required}"
+  defined "${1}" && {
+    task_default="${1}"
+    return 0
+  }
+}
+
+# TOFIX: this function not works
+function file {
+  declare file="${1:?file name is required}"
+  #declare file_options=$(echo {a..h} L k p r s S t u w x O G N)
+  declare file_options="e f g r s w"
+
+  status $"Checking file '${file}'"
+  for check in ${file_options}; do
+    run "test -${check} ${file}"
+  done
+}
+
+# Use a shared task set
+: ${BASH_TOOLBOX_SHARE:?"BASH_TOOLBOX_SHARE not defined"}
+
+include ${BASH_TOOLBOX_SHARE}/tasks
+
+# vim: filetype=sh
+

@@ -1,0 +1,62 @@
+VERSION_FILE=${VERSION_FILE:-.version}
+
+desc version "Load the current version for dump. The version attributes are:" "
+    * tag
+    * date
+    * milestone
+    * timestamp"
+task version {
+  status "Loading version file"
+  load ${VERSION_FILE}
+  version=(${tag//./ })
+  major=${version[0]}
+  minor=${version[1]}
+  patch=${version[2]}
+  build=${version[3]}
+  status "Current version ${tag}"
+}
+
+desc version:major "Dump major version"
+task version:major {
+  status "Increment major version"
+  major=$(( major + 1 ))
+  tag="${major}.0.0"
+  version:dump
+}
+
+desc version:minor "Dump minor version"
+task version:minor {
+  status "Increment minor version"
+  minor=$(( minor + 1 ))
+  tag="${major}.${minor}.0"
+  version:dump
+}
+
+desc version:patch "Dump patch version"
+task version:patch {
+  status "Increment patch version"
+  patch=$(( patch + 1 ))
+  tag="${major}.${minor}.${patch}"
+  version:dump
+}
+
+desc version:build "Dump build version"
+task version:build {
+  status "Increment build version"
+  build=$(( build + 1 ))
+  tag="${major}.${minor}.${patch}.${build}"
+  version:dump
+}
+
+task version:dump {
+  test "${tag//./ }" != "${version[*]}" && {
+    date="$(date +%Y-%m-%d)"
+    status "New version: ${tag} at ${date}"
+    echo "# version attributes"      > ${VERSION_FILE}
+    echo "tag=${tag}"               >> ${VERSION_FILE}
+    echo "date=${date}"             >> ${VERSION_FILE}
+    echo "milestone='${milestone}'" >> ${VERSION_FILE}
+    echo "timestamp=${timestamp}"   >> ${VERSION_FILE}
+  }
+}
+

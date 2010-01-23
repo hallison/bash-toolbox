@@ -1,0 +1,80 @@
+#!/usr/bin/env bash-toolbox
+#$ Usage: bdoc [SCRIP_FILE] [OUTPUT]
+#$        bdoc [OPTIONS]
+#$
+#$ Build Markdown documentation from source file comments.
+#$
+
+#: bdoc(1) -- Bash-Toolbox Documentation
+#: =====================================
+#:
+#: ## SYNOPSIS
+#:
+#: `bdoc` [SCRIP_FILE] [OUTPUT] ...  
+#:
+#: ## DESCRIPTION
+#:
+#: Build Markdown documentation from source file comments.
+#:
+#: ## AUTHOR
+#:
+#: Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#:
+#: ## COPYRIGHT
+#:
+#: Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+#:
+#: Permission is hereby granted, free of charge, to any person obtaining a copy
+#: of this software and associated documentation files (the "Software"), to deal
+#: in the Software without restriction, including without limitation the rights
+#: to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#: copies of the Software, and to permit persons to whom the Software is
+#: furnished to do so, subject to the following conditions:
+#: 
+#: The above copyright notice and this permission notice shall be included in
+#: all copies or substantial portions of the Software.
+#: 
+#: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#: IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#: FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#: AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#: LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#: OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#: THE SOFTWARE.
+#:
+#: ## SEE ALSO
+#:
+#: [bash-toolbox(1)](bash-toolbox.1.html), [bdoc(3)](bdoc.3.html),
+#: [bake(1)](bake.1.html), [bert(1)](bert.1.html),
+#:
+
+# Timestamp: 2010-01-11 13:11:39 -04:00
+
+include ${BASH_TOOLBOX_CLI}
+
+source bdoc.sh
+
+function parse {
+  declare origin=${1:?"origin source is required"}
+  test "${2}" && srcdoc ${origin} > ${2} || srcdoc ${origin}
+  return 0
+}
+
+function bdoc {
+  test ${#} -eq 0 && {
+    usage
+    return 0
+  }
+
+  case ${1} in
+    -h ) usage && return 0;;
+    -* ) fail "invalid option '${1}', try '-h' for help."; return 1 ;;
+    *  ) parse ${@} ;;
+  esac
+
+  return 0
+}
+
+bdoc ${@}
+
+# vim: filetype=sh

@@ -1,0 +1,92 @@
+Bash-Toolbox -- A Bash scripting toolbox
+========================================
+
+SYNOPSIS
+--------
+
+Bash-Toolbox is a simple set of functions and instructions that help develop
+script applications in [Bash][].
+
+DESCRIPTION
+-----------
+
+### Philosophy
+
+Bash-Toolbox is intended to help write script applications which to be
+easy-to-read and easy-to-write, that is, it help the developer to creates
+[Bash][] applications easly with a clean and concise syntax. It implements the
+commands and functions most used by users.
+
+### Features
+
+The Bash-Toolbox have the following features:
+
+* Easy to use.
+* Improve significantly the [Bash][] scripts.
+* Offers a set of tools which help the development.
+* Compatible with [Bash][] v3.x and the new version v4.0.
+
+See the [manual page][man/bash-toolbox.7.html] for more information about
+application tools.
+
+INSTALL
+-------
+
+Download Zipball or Tarball from [Github downloads][]. Decompress package and
+run:
+
+    PATH=$PWD/bin:$PATH
+    sudo -e bake install
+
+This will install all files using `/usr/local` as prefix in sources. If you
+want install in your local applications (e.g. `~/.local/`) just set
+environment variable `PREFIX`.
+
+    PATH=$PWD/bin:$PATH
+    PREFIX=~/.local bake install
+
+INFORMATION
+-----------
+
+The Bash-Toolbox is hosted on following servers:
+
+* [Github][github bash-toolbox].
+* [Codaset][codaset bash-toolbox].
+
+AUTHOR
+------
+
+Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+
+COPYRIGHT
+---------
+
+Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+[Bash]: http://www.case.edu/php/chet/bash/bashtop.html
+  "Bourne Again SHell"
+[github bash-toolbox]: http://github.com/codigorama/bash-toolbox
+  "Bash-Toolbox on Github"
+[github downloads]: http://github.com/codigorama/bash-toolbox/downloads
+  "Github - Bash-Tools downloads"
+[codaset bash-toolbox]: http://codaset.com/codigorama/bash-toolbox
+  "Bash-Toolbox on Github"
+
