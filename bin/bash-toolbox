@@ -68,7 +68,8 @@
 #:
 #: ## SEE ALSO
 #:
-#: `bake(1)`, `bdoc(1)`, `cmdown(1)`
+#: [bash-toolbox(7)](bash-toolbox.7.html), [base(3)](base.3.html),
+#: [bake(1)](bake.1.html), [bdoc(1)](bdoc.1.html), [bert(1)](bert.1.html)
 #:
 
 shopt -s sourcepath
