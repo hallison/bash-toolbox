@@ -14,7 +14,6 @@ task manifest {
       run : "${file}"
     fi
   done
-  MANIFEST=($(readfile ${MANIFEST_FILE}))
 }
 
 # vim: filetype=sh
