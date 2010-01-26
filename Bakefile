@@ -58,8 +58,14 @@ task install {
 
   status "Copying shared files"
   for src in share/* share/*/* share/*/*/*; do
-    test -d ${src} && run install -d ${PREFIX}/${src}
-    test -f ${src} && run install ${src} ${PREFIX}/${src}
+    test -f ${src} && {
+      run install ${src} ${PREFIX}/${src}
+      sources=(\${PREFIX}/${src} ${sources[@]})
+    }
+    test -d ${src} && {
+      run install -d ${PREFIX}/${src}
+      directories=(\${PREFIX}/${src} ${directories[@]})
+    }
   done
 
   status "Copying binaries"
@@ -85,6 +91,12 @@ task uninstall {
   for dir in ${directories[@]}; do
     run rmdir ${dir}
   done
+}
+
+desc reinstall "Reinstall Bash-Toolbox"
+task reinstall {
+  uninstall
+  install
 }
 
 desc reinstall "Reinstall Bash-Toolbox"
