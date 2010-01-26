@@ -58,8 +58,8 @@ task install {
 
   status "Copying shared files"
   for src in share/* share/*/* share/*/*/*; do
-    test -d ${src} && run mkdir -p ${PREFIX}/${src}
-    test -f ${src} && run cp -p ${src} ${PREFIX}/${src}
+    test -d ${src} && run install -d ${PREFIX}/${src}
+    test -f ${src} && run install ${src} ${PREFIX}/${src}
   done
 
   status "Copying binaries"
