@@ -1,4 +1,7 @@
+.uninstall
 .*.sw[p-z]
 *.html
+*.tag
+*.tar*
 *.tmp
 tmp/*

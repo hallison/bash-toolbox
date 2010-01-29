@@ -50,7 +50,7 @@ task version:build {
 
 task version:dump {
   test "${tag//./ }" != "${version[*]}" && {
-    date="$(date +%Y-%m-%d)"
+    date="$(date +%F)"
     status "New version: ${tag} at ${date}"
     echo "# version attributes"      > ${VERSION_FILE}
     echo "tag=${tag}"               >> ${VERSION_FILE}

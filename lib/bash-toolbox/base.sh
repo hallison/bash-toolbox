@@ -1,4 +1,5 @@
-#: base(3) -- bash-toolbox base functions
+
+#: base(3) -- Bash-Toolbox Base Functions
 #: ======================================
 #:
 #: ## SYNOPSIS
@@ -65,17 +66,6 @@ function readfile {
 function load {
   eval "$(readfile ${1})"
 }
-
-# Show usage message in header file
-function usage {
-  content="$(1<${1})"
-  content="${content#\#!*#\$}"
-  content="${content%\#\$*}"
-  content="${content//#\$ }"
-  content="${content:1:${#content}}"
-  echo "${content//#\$}"
-}
-alias usage='usage ${BASH_SOURCE}'
 
 # Handle cursor
 function cursor {

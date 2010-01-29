@@ -1,22 +1,19 @@
 #!/bin/bash
-#$ Usage: bash-toolbox [SOURCE] ...
-#$        bash-toolbox [OPTIONS]
+#$ bash-toolbox v0.2.0 - environment
 #$
 #$ Load all base functions and run script based in Bash-Toolbox
 #$ environment.
 #$
-#$ Options:
-#$   -l   List libraries available.
-#$   -h   Display this message.
-#$   -v   Display version.
+#$ Usage:
+#$   bash-toolbox [SOURCE] ...
 #$
 
-#: bash-toolbox(1) -- Bash-Toolbox Scripting
-#: =========================================
+#: bash-toolbox(1) -- Bash-Toolbox Environment
+#: ===========================================
 #:
 #: ## SYNOPSIS
 #:
-#: `#!/usr/bin/env/bash-toolbox`
+#: `#!/usr/bin/env bash-toolbox`
 #:
 #: `source <bash-toolbox-library>`
 #:
@@ -24,6 +21,13 @@
 #:
 #: `bash-toolbox` load `base.sh` library and run current source using all
 #: libraries available.
+#:
+#: ## ENVIRONMENT
+#:
+#: * `BASH_TOOLBOX_VERSION` :
+#:
+#:   Array that contains major, minor, patch and build respectively version
+#:   information.
 #:
 #: ## AUTHOR
 #:
@@ -33,23 +37,23 @@
 #:
 #: Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
 #:
-#: Permission is hereby granted, free of charge, to any person obtaining a copy
-#: of this software and associated documentation files (the "Software"), to deal
-#: in the Software without restriction, including without limitation the rights
-#: to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#: copies of the Software, and to permit persons to whom the Software is
-#: furnished to do so, subject to the following conditions:
+#: Permission is hereby granted, free of charge, to any person obtaining a
+#: copy of this software and associated documentation files (the "Software"),
+#: to deal in the Software without restriction, including without limitation
+#: the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#: and/or sell copies of the Software, and to permit persons to whom the
+#: Software is furnished to do so, subject to the following conditions:
 #: 
 #: The above copyright notice and this permission notice shall be included in
 #: all copies or substantial portions of the Software.
 #: 
 #: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 #: IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#: FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#: AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#: LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#: OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#: THE SOFTWARE.
+#: FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+#: THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#: LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#: FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#: DEALINGS IN THE SOFTWARE.
 #:
 #: ## SEE ALSO
 #:
@@ -61,6 +65,7 @@ shopt -s sourcepath
 
 # Global constants
 #declare BASH_TOOLBOX_PATH="/usr"
+declare BASH_TOOLBOX_VERSION=(0 1 1)
 declare BASH_TOOLBOX_PATH="${BASH_SOURCE%/*}/.."
 declare BASH_TOOLBOX_LIB="${BASH_TOOLBOX_PATH}/lib/bash-toolbox"
 declare BASH_TOOLBOX_CLI="${BASH_TOOLBOX_LIB}/cli"
@@ -69,23 +74,15 @@ declare PATH_ORIGIN="${PATH}"
 declare PATH="${PATH}:${BASH_TOOLBOX_LIB}"
 
 source base.sh
+source content.sh
 
-function list {
-  for lib in ${BASH_TOOLBOX_LIB}/*.sh; do
-    echo "${lib##*/}"
-  done
-  return 0
-}
+test ${#} -eq 0 && usage && exit 0
 
-case ${1} in
-  -l ) list;  exit 0 ;;
-  -h ) usage; exit 0 ;;
-  -v ) usage; exit 0 ;;
-  -* ) fail "argument '${1}' invalid, try '-h' for help."; exit 1 ;;
-  *  ) script="${1}" ; shift ;;
-esac
+declare script=${1:?"source is required"}
 
-source ${script:?"source is required"} ${@}
+shift
+
+source ${script} ${@}
 
 # vim: filetype=sh
 

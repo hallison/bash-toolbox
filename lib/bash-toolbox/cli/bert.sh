@@ -1,3 +1,4 @@
+
 #: bert(3) -- Bash-Toolbox Command Parser
 #: ======================================
 #:
@@ -40,7 +41,8 @@
 #:
 #: ## SEE ALSO
 #:
-#: `bert(1)`, `btake(1)`
+#: [bert(1)](bert.1.html), [bert(5)](bert.5.html), [bake(1)](bake.1.html)
+#:
 
 # Timestamp: 2010-01-08 17:59:17 -04:00
 

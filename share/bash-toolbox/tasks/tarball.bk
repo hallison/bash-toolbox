@@ -1,0 +1,73 @@
+source manifest.bk
+
+desc tar "Create/update tarball ${TARBALL}"
+task tar {
+  : ${TARBALL:?"TARBALL is required"}
+
+  manifest
+
+  if command -v tar &> /dev/null; then
+    rm ${TARBALL} &> /dev/null
+    status "Archiving ${TARBALL}"
+    for file in $(readfile ${MANIFEST}); do
+      run tar -uf ${TARBALL} ${file}
+    done
+  else
+    fail "tar command not found"
+    fail "install tar"
+    return 1
+  fi
+}
+
+desc tar:gz "Compress tarball to ${TARBALL}.gz"
+task tar:gz {
+  status "Packaging file ${TARBALL}.gz"
+  if command -v gzip &> /dev/null; then
+    test -f ${TARBALL}.gz && run rm ${TARBALL}.gz
+    run gzip ${TARBALL}
+  else
+    fail "gzip command not found"
+    fail "install gzip"
+    return 1
+  fi
+}
+
+desc tar:bz2 "Compress tarball to ${TARBALL}.bz2"
+task tar:bz2 {
+  status "Packaging file ${TARBALL}.bz2"
+  if command -v bzip2 &> /dev/null; then
+    test -f ${TARBALL}.bz2 && run rm ${TARBALL}.bz2
+    run bzip2 ${TARBALL}
+  else
+    fail "bzip2 command not found"
+    fail "install bzip2"
+    return 1
+  fi
+}
+
+desc tar:zip "Compress tarball to ${TARBALL}.zip"
+task tar:zip {
+  status "Packaging file ${TARBALL}.zip"
+  if command -v zip &> /dev/null; then
+    test -f ${TARBALL}.zip && run rm ${TARBALL}.zip
+    run zip ${TARBALL} ${TARBALL}.zip
+  else
+    fail "zip command not found"
+    fail "install zip"
+    return 1
+  fi
+}
+
+#  PACKAGE_LIST=${PACKAGE_FILE:-(PACKAGE_FILE)}
+#
+#  for tarball in ${PACKAGE_LIST}; do
+#    status "Packaging file ${tarball}"
+#    case ${tarball##*.} in
+#      gz  ) gzip -c ${tarfile} > ${tarball} ;;
+#      bz2 ) bzip2 -c ${tarfile} > ${tarball} ;;
+#      zip ) zip ${tarball} ${tarfile} ;;
+#      *   ) fail "compress format '${extension}' not supported" && return 1 ;;
+#    esac
+#  done
+# vim: filetype=sh
+

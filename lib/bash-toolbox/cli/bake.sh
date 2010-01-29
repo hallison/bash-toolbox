@@ -1,9 +1,13 @@
-#: bake(3) -- bash-toolbox make
+
+#: bake(3) -- Bash-Toolbox Make
 #: ============================
 #:
 #: ## SYNOPSIS
 #:
 #: `#!/usr/bin/env bash-toolbox`
+#:
+#: `include ${BASH_TOOLBOX_CLI}`
+#:
 #: `source bake.sh`
 #:
 #: ## DESCRIPTION
@@ -38,6 +42,11 @@
 #: OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #: THE SOFTWARE.
 #:
+#: ## SEE ALSO
+#:
+#: [bash-toolbox(1)](bash-toolbox.1.html), [bake(1)](bake.1.html),
+#: [bakefile(5)](bakefile.5.html)
+#:
 
 # Timestamp: 2010-01-11 17:40:25 -04:00
 
@@ -58,12 +67,15 @@ declare -x task_file="${task_file:-[Bb]akefile}"
 #declare  TASK_COMMAND="${TASK_COMMAND:-\e[G* %-72s [%03d/%03d]}"
 declare  TASK_COMMAND="${TASK_COMMAND:-  > %-66s [%5s]\e[6D}"
 declare  TASK_STATUS="${TASK_STATUS:-* %s\n}"
-declare  TASK_ERROR="${TASK_ERROR:-    %02d: %-8s: %03d : %-44s\n}"
+declare  TASK_ERROR="${TASK_ERROR:-    %02d: %s: %d : %s\n}"
 declare  TASK_ERROR_FILE=${TMP}/${BASH_SOURCE##*/}.errors
 
 # Aliases
 alias     task='function'
 alias noerrors='test ! "${task_errors[*]}"'
+alias timestamp='command date +%F\ %T.%N\ %z'
+alias file_modify='command stat -c %y'
+alias file_changy='command stat -c %z'
 
 # Add name and description for a task.
 function desc {
@@ -105,6 +117,7 @@ function run {
     done
 
     message="${command[*]}"
+    command[0]="command ${command[0]}"
 
     cursor --turn-off
 
@@ -112,7 +125,7 @@ function run {
 
     printf "${TASK_COMMAND}" "${message:0:66}" "${status}"
 
-    "${command[@]}" &> ${TASK_ERROR_FILE}.${new}
+    ${command[@]} &> ${TASK_ERROR_FILE}.${new}
 
     task_return=${?}
 
@@ -120,10 +133,10 @@ function run {
       status="done"
       printf "${format}" "${status}"
     else
-      local error="$(1<${TASK_ERROR_FILE}.${new})"
+      local error="$(readfile ${TASK_ERROR_FILE}.${new})"
       status="error"
       printf "${format}" "${status}"
-      task_errors[new]="${command[0]} ${task_return}"
+      task_errors[new]="${command[0]#command} ${task_return}"
       printf "${TASK_ERROR}" ${new} ${task_errors[new]} "${error##*:}"
     fi
     #printf "${TASK_COMMAND}\n" "${*}" "${status}"
@@ -135,8 +148,10 @@ function run {
 # TODO: remove this?
 function errors {
   : "${1:?error index is required}"
-  local error="$(readfile ${TASK_ERROR_FILE}.${1})"
-  printf "${TASK_ERROR}" ${1} ${task_errors[1]} "${error##*:}"
+  if test -f ${TASK_ERROR_FILE}.${1}; then
+    local error="$(readfile ${TASK_ERROR_FILE}.${1})"
+    printf "${TASK_ERROR}" ${1} ${task_errors[1]} "${error##*:}"
+  fi
 }
 
 # Invoke a task
@@ -146,7 +161,7 @@ function invoke {
   declare task="${1}"
   declare namespace=${task%%:*}
 
-  rm ${TASK_ERROR_FILE}.*
+  rm ${TASK_ERROR_FILE}* &> /dev/null
 
   test "${namespace}" != "${task}" && ${namespace}
   ${task} || errors ${task_return}
@@ -171,13 +186,13 @@ function default {
 
 # TOFIX: this function not works
 function file {
-  declare file="${1:?file name is required}"
-  #declare file_options=$(echo {a..h} L k p r s S t u w x O G N)
-  declare file_options="e f g r s w"
-
-  status $"Checking file '${file}'"
-  for check in ${file_options}; do
-    run "test -${check} ${file}"
+  : ${1:?"file name is required"}
+  : ${2:?"dependency file name is required"}
+  declare file="${1}"; shift
+  declare changes=()
+  for dependency in ${[@]}; do
+    # check out of date
+    test "$(timestamp ${file})" > "$(timestamp ${dependency})"
   done
 }
 

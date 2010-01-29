@@ -26,7 +26,7 @@ The Bash-Toolbox have the following features:
 * Offers a set of tools which help the development.
 * Compatible with [Bash][] v3.x and the new version v4.0.
 
-See the [manual page][man/bash-toolbox.7.html] for more information about
+See the [manual page](man/bash-toolbox.7.html) for more information about
 application tools.
 
 INSTALL
@@ -44,6 +44,12 @@ environment variable `PREFIX`.
 
     PATH=$PWD/bin:$PATH
     PREFIX=~/.local bake install
+
+The installation task will create `.uninstall` file that used by
+`uninstall` task. So, if you want uninstall Bash-Toolbox, just run:
+
+    cd <path/to/bash-toolbox/source>
+    bake uninstall
 
 INFORMATION
 -----------
@@ -83,10 +89,13 @@ THE SOFTWARE.
 
 [Bash]: http://www.case.edu/php/chet/bash/bashtop.html
   "Bourne Again SHell"
+
 [github bash-toolbox]: http://github.com/codigorama/bash-toolbox
-  "Bash-Toolbox on Github"
+  "Bash-Toolbox hosted on Github"
+
 [github downloads]: http://github.com/codigorama/bash-toolbox/downloads
-  "Github - Bash-Tools downloads"
+  "Github - Bash-Toolbox downloads"
+
 [codaset bash-toolbox]: http://codaset.com/codigorama/bash-toolbox
-  "Bash-Toolbox on Github"
+  "Bash-Toolbox hosted on Codaset"
 

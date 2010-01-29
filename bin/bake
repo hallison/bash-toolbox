@@ -1,9 +1,12 @@
 #!/usr/bin/env bash-toolbox
-#$ Usage: bake [-f] [BAKEFILE] [TASK] ...
-#$        bake [TASK] ...
-#$        bake [OPTIONS] ...
+#$ bash-toolbox v0.2.0 - bake
 #$
 #$ Make a specific task invoking by name.
+#$
+#$ Usage:
+#$   bake [-f] [BAKEFILE] [TASK] ...
+#$   bake [TASK] ...
+#$   bake [OPTIONS] ...
 #$
 #$ Options:
 #$   -f   Load task file.
@@ -56,28 +59,28 @@
 #:
 #: Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
 #:
-#: Permission is hereby granted, free of charge, to any person obtaining a copy
-#: of this software and associated documentation files (the "Software"), to deal
-#: in the Software without restriction, including without limitation the rights
-#: to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#: copies of the Software, and to permit persons to whom the Software is
-#: furnished to do so, subject to the following conditions:
+#: Permission is hereby granted, free of charge, to any person obtaining a
+#: copy of this software and associated documentation files (the "Software"),
+#: to deal in the Software without restriction, including without limitation
+#: the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#: and/or sell copies of the Software, and to permit persons to whom the
+#: Software is furnished to do so, subject to the following conditions:
 #: 
 #: The above copyright notice and this permission notice shall be included in
 #: all copies or substantial portions of the Software.
 #: 
 #: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 #: IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#: FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#: AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#: LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#: OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#: THE SOFTWARE.
+#: FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+#: THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#: LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#: FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#: DEALINGS IN THE SOFTWARE.
 #:
 #: ## SEE ALSO
 #:
 #: [bash-toolbox(1)](bash-toolbox.1.html), [bake(3)](bake.3.html),
-#: [bake(5)](bake.5.html), [bake(7)](bake.7.html), [bert(1)](bert.1.html)
+#: [bakefile(5)](bakefile.5.html), [bert(1)](bert.1.html)
 #:
 
 # Timestamp: 2010-01-08 17:59:17 -04:00
@@ -85,6 +88,7 @@
 include ${BASH_TOOLBOX_CLI}
 
 source bake.sh
+source content.sh
 
 # List all tasks.
 function list {

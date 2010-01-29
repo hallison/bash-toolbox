@@ -13,36 +13,32 @@ alias ron='ron -br5 --manual="Bash-Toolbox Manual" --organization="Bash-Toolbox"
 
   - Build manpages session 1 - applications
     for app in bin/*; do
-      + bdoc ${app} tmp/man/${app##*/}.1.mkd
-      + ron tmp/man/${app##*/}.1.mkd
+      + bdoc -m ${app} tmp/man/${app##*/}.1.md
+      + ron tmp/man/${app##*/}.1.md
     done
 
   - Build manpages session 3 - libraries
     for lib in lib/bash-toolbox/*.sh lib/bash-toolbox/cli/*.sh; do
       mkd=${lib%.sh}
       mkd=${mkd##*/}
-      + bdoc ${lib} tmp/man/${mkd}.3.mkd
-      + ron tmp/man/${mkd}.3.mkd
+      + bdoc -m ${lib} tmp/man/${mkd}.3.md
+      + ron tmp/man/${mkd}.3.md
     done
 
-  - Build manpages session 5 - formats and conventions
-    for doc in man/*.5.mkd; do
+  - Build manpages session 5 and 7 - formats, conventions and miscelaneous
+    for doc in man/*.5.md man/*.7.md; do
       mkd=${doc##*/}
       + cp ${doc} tmp/man/${mkd}
       + ron tmp/man/${mkd}
     done
 
-  - Build manpages session 7 - miscelaneous
-    + cp README.mkd tmp/man/bash-toolbox.7.mkd
-    + ron tmp/man/bash-toolbox.7.mkd
-
   - Building index for homepage
-    + cp README.mkd tmp/man/index.mkd
-    + ron tmp/man/index.mkd
+    + cp README.mkd tmp/man/index.md
+    + ron tmp/man/index.md
 
   - Move HTML files to homepage
     for html in tmp/man/*.html; do
-      + mv ${html} homepage/man
+      + mv ${html} homepage/man/
     done
 
 # vim: filetype=sh

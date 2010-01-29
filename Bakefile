@@ -1,47 +1,91 @@
 PREFIX=${PREFIX:-/usr/local}
+GLOB=(bin/* lib/* lib/*/* lib/*/*/* share/* man/* Bakefile COPY* README* Manifest)
+TARBALL="${DIRSTACK##*/}-0.1.0.tar"
+PKG_LIST=(gz zip)
 
 source version.bk
-source manifest.bk
+source tarball.bk
 
-desc news "Push new changes to hosts"
-task news {
-  hosts="github fork codaset gitorious"
+task push {
+  hosts_for_news="github fork codaset gitorious"
+  hosts_for_releases="$(git remote)"
+}
 
-  status "Pushing news to hosts: ${hosts// /, }"
-  for remote in ${hosts}; do
+desc push:news "Push new changes to hosts"
+task push:news {
+  status "Pushing news to hosts: ${hosts_for_news// /, }"
+  for remote in ${hosts_for_news}; do
     run git push ${remote} news
   done
 }
 
-desc release "Push a new release and all tags"
-task release {
-  hosts="$(git remote)"
-
-  status "Pushing master branch to hosts: ${hosts// /, }"
-  for remote in ${hosts}; do
+desc push:release "Push a new release and all tags"
+task push:release {
+  status "Pushing master branch to hosts: ${hosts_for_releases// /, }"
+  for remote in ${hosts_for_releases}; do
     run git push --tags ${remote} master
   done
 }
 
 desc install "Install Bash-Toolbox in ${PREFIX}"
 task install {
+  declare -a sources=()
+  declare -a directories=()
+
   status "Copying libraries"
   for lib in lib/* lib/*/* lib/*/*/*; do
-    test -d ${lib} && run mkdir -p ${PREFIX}/${lib}
-    test -f ${lib} && run cp -p ${lib} ${PREFIX}/${lib}
+    test -d ${lib} && {
+      run install -d ${PREFIX}/${lib}
+      directories=(\${PREFIX}/${lib} ${directories[@]})
+    }
+    test -f ${lib} && {
+      run install ${lib} ${PREFIX}/${lib}
+      sources=(${sources[@]} \${PREFIX}/${lib})
+    }
   done
 
   status "Copying shared files"
   for src in share/* share/*/* share/*/*/*; do
-    test -d ${src} && run mkdir -p ${PREFIX}/${src}
-    test -f ${src} && run cp -p ${src} ${PREFIX}/${src}
+    test -f ${src} && {
+      run install ${src} ${PREFIX}/${src}
+      sources=(\${PREFIX}/${src} ${sources[@]})
+    }
+    test -d ${src} && {
+      run install -d ${PREFIX}/${src}
+      directories=(\${PREFIX}/${src} ${directories[@]})
+    }
   done
 
   status "Copying binaries"
-  run mkdir -p ${PREFIX}/bin
+  run install -d ${PREFIX}/bin
   for bin in bin/*; do
-    run cp -p ${bin} ${PREFIX}/${bin}
+    run install ${bin} ${PREFIX}/${bin}
+    sources=(${sources[@]} \${PREFIX}/${bin})
+  done
+  echo "declare    PREFIX=${PREFIX}" > .uninstall
+  echo "declare -a sources=(${sources[@]})" >> .uninstall
+  echo "declare -a directories=(${directories[@]})" >> .uninstall
+}
+
+desc uninstall "Uninstall Bash-Toolbox"
+task uninstall {
+  source .uninstall
+  status "Removing all files"
+  for src in ${sources[@]}; do
+    test -f ${src} && run rm ${src}
+  done
+
+  status "Removing empty directories"
+  for dir in ${directories[@]}; do
+    run rmdir ${dir}
   done
 }
 
+desc reinstall "Reinstall Bash-Toolbox"
+task reinstall {
+  uninstall
+  install
+}
+
 # vim: filetype=sh
+
