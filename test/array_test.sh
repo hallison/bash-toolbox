@@ -33,8 +33,16 @@ else
   echo "array removed: fail"
 fi
 
-list[:]; do
-  echo "array loop: ${list[i]} ok"
-  list[i]
+list[~]; do
+  if test "${list[i]}" == "$(list[i])"; then
+    echo "array loop: '${list[i]}' ok"
+  else
+    echo "array loop: '${list[i]}' fail"
+  fi
 done
 
+if test "$(list[:] 0 2)" == "second third"; then
+  echo "array subarray: ok ($(list[:] 0 2))"
+else
+  echo "array subarray: fail"
+fi

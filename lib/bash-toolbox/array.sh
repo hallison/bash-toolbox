@@ -50,10 +50,10 @@
 #: to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 #: copies of the Software, and to permit persons to whom the Software is
 #: furnished to do so, subject to the following conditions:
-#: 
+#:
 #: The above copyright notice and this permission notice shall be included in
 #: all copies or substantial portions of the Software.
-#: 
+#:
 #: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 #: IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 #: FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -64,7 +64,7 @@
 #:
 #: ## SEE ALSO
 #:
-#: [bash-toolbox(1)](bash-toolbox.1.html)
+#: [bash-toolbox(1)](bash-toolbox.1.html), [base(3)](base.3.html)
 #:
 
 # Timestamp: 2010-01-26 00:58:17 -04:00
@@ -94,7 +94,10 @@ function array {
   eval "function ${1}[-] { unset ${1}[\${1}]; }"
 
   # Alias for loop in array index
-  eval "alias ${1}[:]='for i in \${!${1}[@]}'"
+  eval "function ${1}[:] { echo \"\${${1}[@]:\${1}:\${2}}\"; }"
+
+  # Alias for loop in array index
+  eval "alias ${1}[~]='for i in \${!${1}[@]}'"
 
   # Alias for item in loop array index
   eval "alias ${1}[i]='echo \${${1}[i]}'"
