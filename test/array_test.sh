@@ -1,48 +1,33 @@
 source array.sh
+source asserts.sh
 
 array list
 
-if declare list &> /dev/null; then
-  echo "array init: ok"
-else
-  echo "array init: fail"
-fi
+assert_variable list
+assert_function list[*]
+assert_function list[@] # function to show all itens
+assert_function list[#] # function to handle array size
+assert_function list[!] # function to show array index
+assert_function list[+] # function to add
+assert_function list[-] # function to remove
+assert_function list[:] # function to split a subarray
 
 list[+] "first"
 list[+] "second"
 list[+] "third"
 list[+] "end of array"
 
-if test "$(list[*])" == "first second third end of array"; then
-  echo "array itens: ok"
-else
-  echo "array itens: fail"
-fi
+assert_equal "$(list[*])" "first second third end of array"
 
-if list[?] 4; then
-  echo "array check size: ok"
-else
-  echo "array check size: fail"
-fi
+assert list[#] -eq 4
 
 list[-] 0
 
-if list[?] 3; then
-  echo "array removed: ok"
-else
-  echo "array removed: fail"
-fi
+assert list[#] -eq 3
 
 list[~]; do
-  if test "${list[i]}" == "$(list[i])"; then
-    echo "array loop: '${list[i]}' ok"
-  else
-    echo "array loop: '${list[i]}' fail"
-  fi
+  assert_equal "${list[i]}" "$(list[i])"
 done
 
-if test "$(list[:] 0 2)" == "second third"; then
-  echo "array subarray: ok ($(list[:] 0 2))"
-else
-  echo "array subarray: fail"
-fi
+assert_equal "$(list[:] 0 2)" "second third"
+
