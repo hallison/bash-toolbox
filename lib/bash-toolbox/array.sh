@@ -79,7 +79,13 @@ function array {
   eval "function ${1}[@] { echo \"\${${1}[@]}\";  }"
 
   # Function returns array size
-  eval "function ${1}[#] { echo \"\${#${1}[@]}\"; }"
+  eval "function ${1}[#] {
+          if test \${#} -eq 0; then
+            echo \"\${#${1}[@]}\"
+          else
+            test \${#${1}[@]} \${@}
+          fi
+        }"
 
   # Function returns array index
   eval "function ${1}[!] { echo \"\${!${1}[@]}\"; }"
@@ -93,7 +99,7 @@ function array {
   # Function remove a item by index
   eval "function ${1}[-] { unset ${1}[\${1}]; }"
 
-  # Alias for loop in array index
+  # Function to split a subarray
   eval "function ${1}[:] { echo \"\${${1}[@]:\${1}:\${2}}\"; }"
 
   # Alias for loop in array index
