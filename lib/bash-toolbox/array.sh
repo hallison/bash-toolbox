@@ -90,8 +90,12 @@ function array {
   # Function returns array index
   eval "function ${1}[!] { echo \"\${!${1}[@]}\"; }"
 
-  # Function test array size
-  eval "function ${1}[?] { test \${#${1}[@]} -eq \${1}; }"
+  # Function search patterns in itens
+  eval "function ${1}[?] {
+          for i in \${!${1}[@]}; do
+            [[ \${${1}[i]} =~ \${1} ]] && echo \"\${${1}[i]}\"
+          done
+        }"
 
   # Function add a new item into array
   eval "function ${1}[+] { ${1}=(\${${1}[@]} \"\${1}\"); }"

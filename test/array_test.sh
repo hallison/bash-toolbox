@@ -8,6 +8,7 @@ assert_function list[*]
 assert_function list[@] # function to show all itens
 assert_function list[#] # function to handle array size
 assert_function list[!] # function to show array index
+assert_function list[?] # function to search itens that match with a pattern
 assert_function list[+] # function to add
 assert_function list[-] # function to remove
 assert_function list[:] # function to split a subarray
@@ -30,4 +31,10 @@ list[~]; do
 done
 
 assert_equal "$(list[:] 0 2)" "second third"
+
+assert_equal "second" "$(list[?] 'sec*')"
+
+match_list=($(list[?] 'sec*|thir*'))
+
+assert_equal "second third" "${match_list[*]}"
 
