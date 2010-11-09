@@ -1,0 +1,26 @@
+Bash-Toolbox v0.2.0
+===================
+
+* Enhacements
+  * The basic application tools have been updated.
+  * The options in `bash-toolbox` command have been removed.
+  * New basic libraries:
+    * `array.sh` to handle array variables.
+    * The CLI `bdoc.sh` library has been moved to `content.sh` to handle
+      source content.
+  * New shared tasks for use in Bakefiles.
+    * `tarball.bk` to handle tarball files.
+  * New manual pages for API documentation.
+
+* Improvements
+  * New tasks for installation and changes.
+  * Small improvements in all tasks.
+  * The shared task `manifest.bk` has been simplified.
+
+* Fixes
+  * Fixes in reporting errors.
+  * Fixes in the calling of the commands instead tasks.
+  * Fix in remotion error files.
+
+For more information about this project, please visit the repository hosted
+on Github http://github.com/codigorama/bash-toolbox.

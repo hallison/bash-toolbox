@@ -1,0 +1,16 @@
+Bash-Toolbox v0.1.0
+===================
+
+* Added `bash-toolbox` for application interface.
+* Added basic  application tools:
+  * `bake`, a lightweight task manager (a.k.a. builder).
+  * `bert`, command list converter with a syntax easy and clean.
+  * `bdoc`, application tool for documentation using Markdown.
+* Added shared tasks for use in bakefiles.
+  * `version.bk` to handle versioning.
+  * `manifest.bk` to handle manifest files.
+* Added manual pages for API documentation.
+
+For more information about this project, please visit the repository hosted
+on Github http://github.com/codigorama/bash-toolbox.
+
