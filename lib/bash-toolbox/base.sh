@@ -50,12 +50,13 @@ shopt -s shift_verbose
 shopt -s xpg_echo
 shopt -u restricted_shell
 shopt -s sourcepath
+shopt -s extglob
 #shopt -s globstar
 
 # Aliases
 alias   fail='printf "${BASH_SOURCE##*/}: ${FUNCNAME:-main}: %s\n"'
 alias  debug='printf "${BASH_SOURCE##*/}: ${FUNCNAME:-main}: line ${LINENO}: %s\n"'
-alias caller='nm=$(builtin caller 0); nm=${nm% *}; nm=${nm#* }; echo "${nm}"'
+alias caller='nm=$(builtin caller 0); nm=${nm% *}; nm=${nm#* }; echo "${nm}"; unset nm'
 
 # Read a source file content
 function readfile {
@@ -106,5 +107,6 @@ function trace {
   done
 }
 alias trace='trace "${BASH_SOURCE[*]}" "${FUNCNAME[*]}" "${BASH_LINENO[*]}"'
+
 # vim: filetype=sh
 
