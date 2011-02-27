@@ -1,18 +1,18 @@
-bert(1) -- Bash-Toolbox Command Convert
+bcmd(1) -- Bash-Toolbox Command Convert
 =======================================
 
 ## SYNOPSIS
 
-`bert` [FILE] [CMD_INDEX] ...
-`bert` [FILE] [OPTIONS] ...
+`bcmd` [FILE] [CMD_INDEX] ...
+`bcmd` [FILE] [OPTIONS] ...
 
 ## DESCRIPTION
 
-`bert` handle command lists defined in a file and run.
+`bcmd` handle command lists defined in a file and run.
 
 ## SYNTAX
 
-The `bert` syntax is very simple and easy.
+The `bcmd` syntax is very simple and easy.
 
 * `=`:
 
@@ -25,10 +25,10 @@ The `bert` syntax is very simple and easy.
 
 * `+`:
 
-  Add a command line that will interpreted by `bert`. That is, the command
+  Add a command line that will interpreted by `bcmd`. That is, the command
   line will be runned in stack of the commands.
 
-Example of the usage a `bert` file contents:
+Example of the usage a `bcmd` file contents:
 
     = Build homepage and documentation
 
@@ -45,11 +45,11 @@ Example of the usage a `bert` file contents:
 
 ## AUTHOR
 
-`bert` was written by Hallison Batista &lt;hallison@codigorama.com&gt;
+`bcmd` was written by Hallison Batista &lt;hallison@codigorama.com&gt;
 
 ## COPYRIGHT
 
-Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+Copyright (C) 2009, 2010 Codigorama &lt;opensource@codigorama.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -71,5 +71,5 @@ THE SOFTWARE.
 
 ## SEE ALSO
 
-[bert(1)](bert.1.html), [bert(3)](bert.3.html), [bake(1)](bake.1.html)
+[bcmd(1)](bcmd.1.html), [bcmd(3)](bcmd.3.html), [bake(1)](bake.1.html)
 

@@ -1,11 +1,11 @@
 
-#: bert(3) -- Bash-Toolbox Command Parser
+#: bcmd(3) -- Bash-Toolbox Command Parser
 #: ======================================
 #:
 #: ## SYNOPSIS
 #:
 #: `#!/usr/bin/env bash-toolbox`
-#: `source bert.sh`
+#: `source bcmd.sh`
 #:
 #: ## DESCRIPTION
 #:
@@ -41,7 +41,7 @@
 #:
 #: ## SEE ALSO
 #:
-#: [bert(1)](bert.1.html), [bert(5)](bert.5.html), [bake(1)](bake.1.html)
+#: [bcmd(1)](bcmd.1.html), [bcmd(5)](bcmd.5.html), [bake(1)](bake.1.html)
 #:
 
 # Timestamp: 2010-01-08 17:59:17 -04:00

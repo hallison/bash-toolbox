@@ -1,11 +1,11 @@
 #!/usr/bin/env bash-toolbox
-#$ bash-toolbox v0.2.0 - bert
+#$ bash-toolbox v0.3.0 - bcmd
 #$
 #$ Make a specific stack of commands invoking by name.
 #$
 #$ Usage:
-#$   bert [FILE] [INDEX] ...
-#$   bert [FILE] [OPTIONS] ...
+#$   bcmd [FILE] [INDEX] ...
+#$   bcmd [FILE] [OPTIONS] ...
 #$
 #$ Options:
 #$   -t    List table of content of the command titles.
@@ -13,17 +13,17 @@
 #$   -v    Display version.
 #$
 
-#: bert(1) -- Bash-Toolbox Command Convert
+#: bcmd(1) -- Bash-Toolbox Command Convert
 #: =======================================
 #:
 #: ## SYNOPSIS
 #:
-#: `bert` [FILE] [CMD_INDEX] ...  
-#: `bert` [FILE] [OPTIONS] ...  
+#: `bcmd` [FILE] [CMD_INDEX] ...  
+#: `bcmd` [FILE] [OPTIONS] ...  
 #:
 #: ## DESCRIPTION
 #:
-#: `bert` handle command lists defined in a file and run.
+#: `bcmd` handle command lists defined in a file and run.
 #:
 #: Example of the  contents:
 #:
@@ -57,7 +57,7 @@
 #:
 #: ## COPYRIGHT
 #:
-#: Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+#: Copyright (C) 2009, 2010 Codigorama &lt;opensource@codigorama.com&gt;
 #:
 #: Permission is hereby granted, free of charge, to any person obtaining a
 #: copy of this software and associated documentation files (the "Software"),
@@ -79,15 +79,15 @@
 #:
 #: ## SEE ALSO
 #:
-#: [bash-toolbox(1)](bash-toolbox.1.html), [bert(3)](bert.3.html),
-#: [bert(5)](bert.5.html), [bake(1)](bake.1.html)
+#: [bash-toolbox(1)](bash-toolbox.1.html), [bcmd(3)](bcmd.3.html),
+#: [bcmd(5)](bcmd.5.html), [bake(1)](bake.1.html)
 #:
 
 # Timestamp: 2010-01-08 17:59:17 -04:00
 
 include ${BASH_TOOLBOX_CLI}
 
-source bert.sh
+source bcmd.sh
 source content.sh
 
 function toc {
@@ -119,7 +119,7 @@ function runcmd {
   return 0
 }
 
-function bert {
+function bcmd {
   test -z "${1}" && {
     usage
     return 0
@@ -160,7 +160,7 @@ function bert {
   return 0
 }
 
-bert ${@}
+bcmd ${@}
 
 # vim: filetype=sh
 
