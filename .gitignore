@@ -4,4 +4,6 @@
 *.tag
 *.tar*
 *.tmp
+src/*
 tmp/*
+

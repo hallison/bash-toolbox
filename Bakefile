@@ -4,10 +4,9 @@ load ${VERSION_FILE}
 
 PREFIX=${PREFIX:-/usr/local}
 PROJECT=${DIRSTACK##*/}
-SOURCE=src/${PROJECT}-${VERSION[0]}
+PACKAGE=${PROJECT}-${VERSION[0]}
+SOURCE=src/${PACKAGE}
 GLOB=($(git ls-files))
-TARBALL="${SOURCE}.tar"
-PKG_LIST=(gz zip)
 
 task base {
   # Global constants
@@ -51,27 +50,22 @@ task config {
   return 0
 }
 
-task push {
-  hosts_for_news="github"
-  hosts_for_releases="$(git remote)"
-}
+desc package "Create package file (tar.gz and zip)"
+task package {
+  invoke config
 
-desc push:changes "Push new changes to hosts"
-task push:changes {
-  for remote in ${hosts_for_news}; do
-    status "Pushing changes to host: ${remote}"
-      git push ${remote} changes
-    end
-  done
-}
+  message --info "Create packages"
+  cd src &> /dev/null
 
-desc push:release "Push a new release and all tags"
-task push:release {
-  for remote in ${hosts_for_releases}; do
-    status "Pushing master branch to host: ${remote}"
-      git push --tags ${remote} master
-    end
-  done
+  status "Packaging ${PACKAGE}.tar.gz"
+    tar -czvf "${PACKAGE}.tar.gz" ${PACKAGE}
+  end
+
+  status "Packaging ${PACKAGE}.zip"
+    zip -r ${PACKAGE}.zip ${PACKAGE}
+  end
+
+  cd ..
 }
 
 desc install "Install Bash-Toolbox in ${PREFIX}"
@@ -82,11 +76,11 @@ task install {
   status "Copying libraries"
   for lib in lib/* lib/*/* lib/*/*/*; do
     test -d ${lib} && {
-      run install -d ${PREFIX}/${lib}
+      install -d ${PREFIX}/${lib}
       directories=(\${PREFIX}/${lib} ${directories[@]})
     }
     test -f ${lib} && {
-      run install ${lib} ${PREFIX}/${lib}
+      install ${lib} ${PREFIX}/${lib}
       sources=(${sources[@]} \${PREFIX}/${lib})
     }
   done
@@ -94,11 +88,11 @@ task install {
   status "Copying shared files"
   for src in share/* share/*/* share/*/*/*; do
     test -f ${src} && {
-      run install ${src} ${PREFIX}/${src}
+      install ${src} ${PREFIX}/${src}
       sources=(\${PREFIX}/${src} ${sources[@]})
     }
     test -d ${src} && {
-      run install -d ${PREFIX}/${src}
+      install -d ${PREFIX}/${src}
       directories=(\${PREFIX}/${src} ${directories[@]})
     }
   done
@@ -106,19 +100,19 @@ task install {
   status "Copying shared files"
   for src in share/* share/*/* share/*/*/*; do
     test -f ${src} && {
-      run install ${src} ${PREFIX}/${src}
+      install ${src} ${PREFIX}/${src}
       sources=(\${PREFIX}/${src} ${sources[@]})
     }
     test -d ${src} && {
-      run install -d ${PREFIX}/${src}
+      install -d ${PREFIX}/${src}
       directories=(\${PREFIX}/${src} ${directories[@]})
     }
   done
 
   status "Copying binaries"
-  run install -d ${PREFIX}/bin
+  install -d ${PREFIX}/bin
   for bin in bin/*; do
-    run install ${bin} ${PREFIX}/${bin}
+    install ${bin} ${PREFIX}/${bin}
     sources=(${sources[@]} \${PREFIX}/${bin})
   done
   echo "declare    PREFIX=${PREFIX}" > .uninstall
@@ -131,12 +125,12 @@ task uninstall {
   source .uninstall
   status "Removing all files"
   for src in ${sources[@]}; do
-    test -f ${src} && run rm ${src}
+    test -f ${src} && rm ${src}
   done
 
   status "Removing empty directories"
   for dir in ${directories[@]}; do
-    run rmdir ${dir}
+    rmdir ${dir}
   done
 }
 
