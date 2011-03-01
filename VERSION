@@ -1,0 +1,11 @@
+# version attributes
+VERSION=(
+  # Tag
+  0.3.0
+  # Release date
+  2011-02-26
+  # Milestone
+  'Beta version'
+  # Timestamps
+  2009-12-09T11:07:59-04:00
+)

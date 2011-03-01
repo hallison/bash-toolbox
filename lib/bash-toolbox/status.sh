@@ -9,7 +9,7 @@ function status {
   : ${1:?${FUNCNAME} requires a text message}
 
   declare message="${1}"
-  declare  stdout="${BASH_TOOLBOX_LOG}"
+  declare  stdout="${BASH_TOOLBOX_LOG:-/tmp/bash-toolbox.log}"
 
   cursor --turn-off
 
@@ -23,7 +23,11 @@ function status {
     shift 1
   done
 
-  message --status "${message}" "${STATUS_BUSY}"
+	if test ${#message} -gt ${COLUMNS_STATUS}; then
+		message="${message:0:$((COLUMNS_STATUS - 3))}..."
+	fi
+
+	message --status "${message}" "${STATUS_BUSY}"
 
   exec 3>&1
   exec 2>&1

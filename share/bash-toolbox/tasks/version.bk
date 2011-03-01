@@ -1,4 +1,4 @@
-VERSION_FILE=${VERSION_FILE:-.version}
+VERSION_FILE=${VERSION_FILE:-VERSION}
 
 desc version "Load the current version for dump. The version attributes are:" "
     * tag
@@ -6,57 +6,72 @@ desc version "Load the current version for dump. The version attributes are:" "
     * milestone
     * timestamp"
 task version {
-  status "Loading version file"
-  load ${VERSION_FILE}
-  version=(${tag//./ })
-  major=${version[0]}
-  minor=${version[1]}
-  patch=${version[2]}
-  build=${version[3]}
-  status "Current version ${tag}"
+  if [[ -z "${version[*]}" ]]; then
+    load ${VERSION_FILE}
+    status "Loading version file"
+      version=(${VERSION[0]//./ })
+      major=${version[0]}
+      minor=${version[1]}
+      patch=${version[2]}
+      build=${version[3]}
+    end
+  fi
 }
 
 desc version:major "Dump major version"
 task version:major {
   status "Increment major version"
-  major=$(( major + 1 ))
-  tag="${major}.0.0"
-  version:dump
+    major=$(( major + 1 ))
+    VERSION[0]="${major}.0.0"
+  end
+  invoke version:dump
 }
 
 desc version:minor "Dump minor version"
 task version:minor {
   status "Increment minor version"
-  minor=$(( minor + 1 ))
-  tag="${major}.${minor}.0"
-  version:dump
+    minor=$(( minor + 1 ))
+    VERSION[0]="${major}.${minor}.0"
+  end
+  invoke version:dump
 }
 
 desc version:patch "Dump patch version"
 task version:patch {
   status "Increment patch version"
-  patch=$(( patch + 1 ))
-  tag="${major}.${minor}.${patch}"
-  version:dump
+    patch=$(( patch + 1 ))
+    VERSION[0]="${major}.${minor}.${patch}"
+  end
+  invoke version:dump
 }
 
 desc version:build "Dump build version"
 task version:build {
   status "Increment build version"
-  build=$(( build + 1 ))
-  tag="${major}.${minor}.${patch}.${build}"
-  version:dump
+    build=$(( build + 1 ))
+    VERSION[0]="${major}.${minor}.${patch}.${build}"
+  end
+  invoke version:dump
 }
 
 task version:dump {
-  test "${tag//./ }" != "${version[*]}" && {
-    date="$(date +%F)"
-    status "New version: ${tag} at ${date}"
-    echo "# version attributes"      > ${VERSION_FILE}
-    echo "tag=${tag}"               >> ${VERSION_FILE}
-    echo "date=${date}"             >> ${VERSION_FILE}
-    echo "milestone='${milestone}'" >> ${VERSION_FILE}
-    echo "timestamp=${timestamp}"   >> ${VERSION_FILE}
+  test "${VERSION[0]//./ }" != "${version[*]}" && {
+    VERSION[1]="$(date +%F)"
+    status "Writting version ${VERSION[0]} to ${VERSION_FILE}"
+      echo "# version attributes" > ${VERSION_FILE}
+      echo "VERSION=("           >> ${VERSION_FILE}
+      echo "  # Tag"             >> ${VERSION_FILE}
+      echo "  ${VERSION[0]}"     >> ${VERSION_FILE}
+      echo "  # Date release"    >> ${VERSION_FILE}
+      echo "  ${VERSION[1]}"     >> ${VERSION_FILE}
+      echo "  # Milestone"       >> ${VERSION_FILE}
+      echo "  '${VERSION[2]}'"   >> ${VERSION_FILE}
+      echo "  # Timestamps"      >> ${VERSION_FILE}
+      echo "  ${VERSION[3]}"     >> ${VERSION_FILE}
+      echo ")"                   >> ${VERSION_FILE}
+    end
   }
+  message --info "v${VERSION[@]}"
 }
 
+# vim: filetype=sh

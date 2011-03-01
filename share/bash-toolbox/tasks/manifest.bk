@@ -4,15 +4,11 @@ task manifest {
 
   MANIFEST="${MANIFEST:-Manifest}"
 
-  status "Creating ${MANIFEST}"
-
-  test -f ${MANIFEST} && run rm ${MANIFEST}
-
   for file in ${GLOB[@]}; do
-    if test -f ${file}; then
-      echo ${file} >> ${MANIFEST}
-      run : "${file}"
-    fi
+    test -f ${MANIFEST} && run rm ${MANIFEST}
+    status "Creating ${file}"
+      test -f ${file} && echo ${file} >> ${MANIFEST}
+    end
   done
 }
 
