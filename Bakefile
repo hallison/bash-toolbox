@@ -1,29 +1,76 @@
+source version.bk
+
+load ${VERSION_FILE}
+
 PREFIX=${PREFIX:-/usr/local}
-GLOB=(bin/* lib/* lib/*/* lib/*/*/* share/* man/* Bakefile COPY* README* Manifest)
-TARBALL="${DIRSTACK##*/}-0.1.0.tar"
+PROJECT=${DIRSTACK##*/}
+SOURCE=src/${PROJECT}-${VERSION[0]}
+GLOB=($(git ls-files))
+TARBALL="${SOURCE}.tar"
 PKG_LIST=(gz zip)
 
-source version.bk
-source tarball.bk
+task base {
+  # Global constants
+  BASH_TOOLBOX_PATH="${PREFIX}"
+  BASH_TOOLBOX_LIB="${BASH_TOOLBOX_PATH}/lib/bash-toolbox"
+  BASH_TOOLBOX_CLI="${BASH_TOOLBOX_LIB}/cli"
+  BASH_TOOLBOX_SHARE="${BASH_TOOLBOX_PATH}/share/bash-toolbox"
+  BASH_TOOLBOX_LOG="/tmp/bash-toolbox.log"
+
+  return 0
+}
+
+desc config "Configure Bash-Toolbox for installation in ${PREFIX}"
+task config {
+  invoke base
+
+  message --info "Setting directories and files"
+
+  local glob=(${GLOB[@]//Bakefile})
+
+  for i in ${!glob[@]}; do
+    local regexp=""
+    local source="${SOURCE}/${glob[i]}"
+    status "Configuring ${source}"
+      mkdir -p ${source%/*}
+
+      regexp="${regexp};s/\${PREFIX.*}/${PREFIX//\//\\/}/g"
+      regexp="${regexp};s/\${BASH_TOOLBOX_PATH.*}/${BASH_TOOLBOX_PATH//\//\\/}/g"
+      regexp="${regexp};s/\${BASH_TOOLBOX_LIB.*}/${BASH_TOOLBOX_LIB//\//\\/}/g"
+      regexp="${regexp};s/\${BASH_TOOLBOX_CLI.*}/${BASH_TOOLBOX_CLI//\//\\/}/g"
+      regexp="${regexp};s/\${BASH_TOOLBOX_SHARE.*}/${BASH_TOOLBOX_SHARE//\//\\/}/g"
+      regexp="${regexp};s/\${BASH_TOOLBOX_LOG.*}/${BASH_TOOLBOX_LOG//\//\\/}/g"
+
+      regexp="${regexp};s/\${VERSION_TAG}/${VERSION[0]//\//\\/}/g"
+      regexp="${regexp};s/\${VERSION_DATE}/${VERSION[1]//\//\\/}/g"
+
+      sed -u "${regexp}" ${glob[i]} > ${source}
+    end
+  done
+
+  return 0
+}
 
 task push {
-  hosts_for_news="github fork codaset gitorious"
+  hosts_for_news="github"
   hosts_for_releases="$(git remote)"
 }
 
-desc push:news "Push new changes to hosts"
-task push:news {
-  status "Pushing news to hosts: ${hosts_for_news// /, }"
+desc push:changes "Push new changes to hosts"
+task push:changes {
   for remote in ${hosts_for_news}; do
-    run git push ${remote} news
+    status "Pushing changes to host: ${remote}"
+      git push ${remote} changes
+    end
   done
 }
 
 desc push:release "Push a new release and all tags"
 task push:release {
-  status "Pushing master branch to hosts: ${hosts_for_releases// /, }"
   for remote in ${hosts_for_releases}; do
-    run git push --tags ${remote} master
+    status "Pushing master branch to host: ${remote}"
+      git push --tags ${remote} master
+    end
   done
 }
 
@@ -95,15 +142,11 @@ task uninstall {
 
 desc reinstall "Reinstall Bash-Toolbox"
 task reinstall {
-  uninstall
-  install
+  invoke uninstall
+  invoke install
 }
 
-desc reinstall "Reinstall Bash-Toolbox"
-task reinstall {
-  uninstall
-  install
-}
+default config
 
 # vim: filetype=sh
 

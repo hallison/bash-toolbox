@@ -1,5 +1,5 @@
 #!/usr/bin/env bash-toolbox
-#$ bash-toolbox v0.3.0 - bcmd
+#$ bash-toolbox v${VERSION_TAG} ${VERSION_DATE} - bcmd
 #$
 #$ Make a specific stack of commands invoking by name.
 #$

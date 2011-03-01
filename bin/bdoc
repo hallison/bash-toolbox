@@ -1,5 +1,5 @@
 #!/usr/bin/env bash-toolbox
-#$ bash-toolbox v0.2.0 - bdoc
+#$ bash-toolbox v${VERSION_TAG} ${VERSION_DATE} - bdoc
 #$
 #$ Build Markdown documentation from source file comments.
 #$
@@ -32,7 +32,7 @@
 #:
 #: ## COPYRIGHT
 #:
-#: Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+#: Copyright (C) 2009, 2010 Codigorama &lt;opensource@codigorama.com&gt;
 #:
 #: Permission is hereby granted, free of charge, to any person obtaining a
 #: copy of this software and associated documentation files (the "Software"),
@@ -55,7 +55,7 @@
 #: ## SEE ALSO
 #:
 #: [bash-toolbox(1)](bash-toolbox.1.html), [content(3)](content.3.html),
-#: [bake(1)](bake.1.html), [bert(1)](bert.1.html),
+#: [bake(1)](bake.1.html), [bcmd(1)](bcmd.1.html),
 #:
 
 # Timestamp: 2010-01-11 13:11:39 -04:00
@@ -63,11 +63,13 @@
 source content.sh
 
 function parse {
-  declare output=${2}
+  declare output=${1%.*}.md
 
-  test -z "${output}" && output=${1%.*}.md
+  test -n "${2}" && output="${2}"
 
-  comments --markdown ${1} > ${output}
+  comments --markdown ${1} >> ${output}
+
+  echo "$(readfile ${output})"
 }
 
 function bdoc {

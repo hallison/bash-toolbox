@@ -1,5 +1,5 @@
 #!/usr/bin/env bash-toolbox
-#$ bash-toolbox v0.2.0 - bake
+#$ bash-toolbox v${VERSION_TAG} ${VERSION_DATE} - bake
 #$
 #$ Make a specific task invoking by name.
 #$
@@ -57,7 +57,7 @@
 #:
 #: ## COPYRIGHT
 #:
-#: Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+#: Copyright (C) 2009, 2010 Codigorama &lt;opensource@codigorama.com&gt;
 #:
 #: Permission is hereby granted, free of charge, to any person obtaining a
 #: copy of this software and associated documentation files (the "Software"),
@@ -80,15 +80,16 @@
 #: ## SEE ALSO
 #:
 #: [bash-toolbox(1)](bash-toolbox.1.html), [bake(3)](bake.3.html),
-#: [bakefile(5)](bakefile.5.html), [bert(1)](bert.1.html)
+#: [bakefile(5)](bakefile.5.html), [bcmd(1)](bcmd.1.html)
 #:
 
 # Timestamp: 2010-01-08 17:59:17 -04:00
 
-include ${BASH_TOOLBOX_CLI}
+include ${BASH_TOOLBOX_CLI:-lib/bash-toolbox/cli}
 
 source bake.sh
 source content.sh
+source status.sh
 
 # List all tasks.
 function list {
@@ -97,6 +98,7 @@ function list {
       for i in ${!task_names[@]}; do
         printf "%s\n    %-74s\n\n" "${task_names[i]}" "${task_descriptions[i]}"
       done
+      printf "Default: %s\n" "${task_default:-none}"
     else
       declare names="${task_names[*]}"
       echo "${names// /\n}"
@@ -146,12 +148,14 @@ function bake {
 
   test ${list} && list && return 0
 
-  test ${#} -gt 0 && {
+  if [[ ${#} -gt 0 ]]; then
     tasks ${@}
-  } || {
+  elif [[ "${task_default}" ]]; then
+    tasks ${task_default}
+  else
     usage
     return 0
-  }
+  fi
 
   return 0
 }

@@ -1,5 +1,5 @@
 #!/bin/bash
-#$ bash-toolbox v0.2.0 - environment
+#$ bash-toolbox v${VERSION_TAG} @{VERSION_DATE} - environment
 #$
 #$ Load all base functions and run script based in Bash-Toolbox
 #$ environment.
@@ -31,9 +31,9 @@
 #:
 #: ### Applications
 #:
-#: * `btake`, bash-toolbox make.
-#: * `btdoc`, bash-toolbox documentation.
-#: * `btodo`, bash-toolbox todo runner.
+#: * `bake`, bash-toolbox make.
+#: * `bdoc`, bash-toolbox documentation.
+#: * `bcmd`, bash-toolbox command runner.
 #:
 #: ## AUTHOR
 #:
@@ -41,7 +41,7 @@
 #:
 #: ## COPYRIGHT
 #:
-#: Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+#: Copyright (C) 2009, 2010 Codigorama &lt;opensource@codigorama.com&gt;
 #:
 #: Permission is hereby granted, free of charge, to any person obtaining a
 #: copy of this software and associated documentation files (the "Software"),
@@ -64,25 +64,18 @@
 #: ## SEE ALSO
 #:
 #: [bash-toolbox(7)](bash-toolbox.7.html), [base(3)](base.3.html),
-#: [bake(1)](bake.1.html), [bdoc(1)](bdoc.1.html), [bert(1)](bert.1.html)
+#: [bake(1)](bake.1.html), [bdoc(1)](bdoc.1.html), [bcmd(1)](bcmd.1.html)
 #:
 #: ## SEE ALSO
 #:
 #: [bash-toolbox(7)](bash-toolbox.7.html), [base(3)](base.3.html),
-#: [bake(1)](bake.1.html), [bdoc(1)](bdoc.1.html), [bert(1)](bert.1.html)
+#: [bake(1)](bake.1.html), [bdoc(1)](bdoc.1.html), [bcmd(1)](bcmd.1.html)
 #:
 
 shopt -s sourcepath
 
-# Global constants
-#declare BASH_TOOLBOX_PATH="/usr"
-declare BASH_TOOLBOX_VERSION=(0 1 1)
-declare BASH_TOOLBOX_PATH="${BASH_SOURCE%/*}/.."
-declare BASH_TOOLBOX_LIB="${BASH_TOOLBOX_PATH}/lib/bash-toolbox"
-declare BASH_TOOLBOX_CLI="${BASH_TOOLBOX_LIB}/cli"
-declare BASH_TOOLBOX_SHARE="${BASH_TOOLBOX_PATH}/share/bash-toolbox"
 declare PATH_ORIGIN="${PATH}"
-declare PATH="${PATH}:${BASH_TOOLBOX_LIB}"
+declare PATH="${BASH_TOOLBOX_LIB:-lib/bash-toolbox}:${PATH}"
 
 source base.sh
 source content.sh
@@ -93,7 +86,7 @@ declare script=${1:?"source is required"}
 
 shift
 
-source ${script} ${@}
+source $(readlink -f "${script}")
 
 # vim: filetype=sh
 
