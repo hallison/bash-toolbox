@@ -13,7 +13,7 @@ The application tools are:
 * [bake](bake.1.html):
   A lightweight task manager (a.k.a. builder) like GNU/Make.
 
-* [bert](bert.1.html)
+* [bcmd](bcmd.1.html)
   A simple tool which convert a list of commands written in a specific file
   based in a clean and easy syntax.
 

@@ -107,7 +107,7 @@ first.
 
 ## COPYRIGHT
 
-Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+Copyright (C) 2009-2011 Codigorama &lt;opensource@codigorama.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -129,5 +129,5 @@ THE SOFTWARE.
 
 ## SEE ALSO
 
-[bake(1)](bake.1.html), [bake(3)](bake.3.html), [bert(1)](bert.1.html)
+[bake(1)](bake.1.html), [bake(3)](bake.3.html), [bcmd(1)](bcmd.1.html)
 
