@@ -97,54 +97,6 @@ function desc {
 #     return ${task_return}
 #   }'
 
-# Display a status message
-function status {
-  printf "${TASK_STATUS}" "${1}"
-}
-
-# Run commands redirecting output to null
-function run {
-  test ${#} -gt 0 && {
-    declare    new=${#task_errors[@]}
-    declare    format="%5s\n"
-    declare    status="busy"
-    declare -a command=()
-    declare    message=""
-
-    for arg in "${@}"; do
-      declare cmd=${#command[@]}
-      [[ ${arg} =~ ' ' ]] && command[cmd]="'${arg}'" || command[cmd]="${arg}"
-    done
-
-    message="${command[*]}"
-    command[0]="command ${command[0]}"
-
-    cursor --turn-off
-
-    test ${#message} -gt 66 && message="${message:0:63}..."
-
-    printf "${TASK_COMMAND}" "${message:0:66}" "${status}"
-
-    ${command[@]} &> ${TASK_ERROR_FILE}.${new}
-
-    task_return=${?}
-
-    if test ${task_return} -eq 0; then
-      status="done"
-      printf "${format}" "${status}"
-    else
-      local error="$(readfile ${TASK_ERROR_FILE}.${new})"
-      status="error"
-      printf "${format}" "${status}"
-      task_errors[new]="${command[0]#command} ${task_return}"
-      printf "${TASK_ERROR}" ${new} ${task_errors[new]} "${error##*:}"
-    fi
-    #printf "${TASK_COMMAND}\n" "${*}" "${status}"
-    cursor --turn-on
-  }
-  return ${task_return}
-}
-
 # TODO: remove this?
 function errors {
   : "${1:?error index is required}"
@@ -164,7 +116,7 @@ function invoke {
   rm ${TASK_ERROR_FILE}* &> /dev/null
 
   test "${namespace}" != "${task}" && ${namespace}
-  ${task} || errors ${task_return}
+  ${task} #|| errors ${task_return}
 }
 
 # Check if a task was defined
@@ -197,9 +149,7 @@ function file {
 }
 
 # Use a shared task set
-: ${BASH_TOOLBOX_SHARE:?"BASH_TOOLBOX_SHARE not defined"}
-
-include ${BASH_TOOLBOX_SHARE}/tasks
+include ${BASH_TOOLBOX_SHARE:-share/bash-toolbox}/tasks
 
 # vim: filetype=sh
 

@@ -49,9 +49,9 @@ function comments {
   declare char=""
 
   case ${1} in
-    # extract only usage message from the comments started by '#$'
+    # extract only usage message from the comments started by '$'
     -u|--usage    ) char='$' ;;
-    # extract only Markdown contents from the comments started by '#:'
+    # extract only Markdown contents from the comments started by ':'
     -m|--markdown ) char=':' ;;
     #-t|--tags     ) char='@' ;;
     -*            ) fail "argument '${1}' invalid" && return 1 ;;
@@ -59,7 +59,7 @@ function comments {
   shift
 
   declare   origin="$(readfile ${1})"
-  declare comments="$(readfile ${1})"
+  declare comments="${origin}"
 
   comments="${comments#\#!*\#${char}}"
   comments="${comments%\#${char}*}"
