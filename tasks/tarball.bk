@@ -6,7 +6,7 @@ task tar {
   if command -v tar &> /dev/null; then
     rm ${TARBALL} &> /dev/null
     for i in ${!GLOB[@]}; do
-      status "Archiving ${GLOB[i]}"
+      start "Archiving ${GLOB[i]}"
         command tar -uf "${TARBALL}" "${GLOB[i]}"
       end
     done
@@ -19,7 +19,7 @@ task tar {
 
 desc tar:gz "Compress tarball to ${TARBALL}.gz"
 task tar:gz {
-  status "Packaging file ${TARBALL}.gz"
+  start "Packaging file ${TARBALL}.gz"
     if command -v gzip &> /dev/null; then
       test -f ${TARBALL}.gz && rm ${TARBALL}.gz
       command gzip ${TARBALL}
@@ -33,7 +33,7 @@ task tar:gz {
 
 desc tar:bz2 "Compress tarball to ${TARBALL}.bz2"
 task tar:bz2 {
-  status "Packaging file ${TARBALL}.bz2"
+  start "Packaging file ${TARBALL}.bz2"
     if command -v bzip2 &> /dev/null; then
       test -f ${TARBALL}.bz2 && rm ${TARBALL}.bz2
       command bzip2 ${TARBALL}
@@ -47,7 +47,7 @@ task tar:bz2 {
 
 desc tar:zip "Compress tarball to ${TARBALL}.zip"
 task tar:zip {
-  status "Packaging file ${TARBALL}.zip"
+  start "Packaging file ${TARBALL}.zip"
     if command -v zip &> /dev/null; then
       test -f ${TARBALL}.zip && rm ${TARBALL}.zip
       zip ${TARBALL} ${TARBALL}.zip

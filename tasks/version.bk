@@ -8,7 +8,7 @@ desc version "Load the current version for dump. The version attributes are:" "
 task version {
   if [[ -z "${version[*]}" ]]; then
     load ${VERSION_FILE}
-    status "Loading version file"
+    start "Loading version file"
       version=(${VERSION[0]//./ })
       major=${version[0]}
       minor=${version[1]}
@@ -20,7 +20,7 @@ task version {
 
 desc version:major "Dump major version"
 task version:major {
-  status "Increment major version"
+  start "Increment major version"
     major=$(( major + 1 ))
     VERSION[0]="${major}.0.0"
   end
@@ -29,7 +29,7 @@ task version:major {
 
 desc version:minor "Dump minor version"
 task version:minor {
-  status "Increment minor version"
+  start "Increment minor version"
     minor=$(( minor + 1 ))
     VERSION[0]="${major}.${minor}.0"
   end
@@ -38,7 +38,7 @@ task version:minor {
 
 desc version:patch "Dump patch version"
 task version:patch {
-  status "Increment patch version"
+  start "Increment patch version"
     patch=$(( patch + 1 ))
     VERSION[0]="${major}.${minor}.${patch}"
   end
@@ -47,7 +47,7 @@ task version:patch {
 
 desc version:build "Dump build version"
 task version:build {
-  status "Increment build version"
+  start "Increment build version"
     build=$(( build + 1 ))
     VERSION[0]="${major}.${minor}.${patch}.${build}"
   end
@@ -57,7 +57,7 @@ task version:build {
 task version:dump {
   test "${VERSION[0]//./ }" != "${version[*]}" && {
     VERSION[1]="$(date +%F)"
-    status "Writting version ${VERSION[0]} to ${VERSION_FILE}"
+    start "Writting version ${VERSION[0]} to ${VERSION_FILE}"
       echo "# version attributes" > ${VERSION_FILE}
       echo "VERSION=("           >> ${VERSION_FILE}
       echo "  # Tag"             >> ${VERSION_FILE}

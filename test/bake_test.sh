@@ -5,46 +5,41 @@ task test:hello {
 
 desc test:status "Test task and status functions"
 task test:status {
-  status "Running valid commands"
-  for i in {0..1}; do
-    run ls
-    run sleep 0.${i}
-    run ls -al
-    run echo "live and let die ..."
-    run duck
-    run git push tilt not
-  done
+  start "Running valid commands"
+    for i in {0..1}; do
+      ls
+      sleep 0.${i}
+      ls -al
+      echo "live and let die ..."
+      duck
+      git push tilt not
+    done
+  end
 
-  status "Running invalid commands resulting fail"
-  run sleep 1
-  run not-found
-  run sleep 1
-  run invalid
-  run ls not-found
+  start "Running invalid commands resulting fail"
+    sleep 1
+    not-found
+    sleep 1
+    invalid
+    ls not-found
+  end
 }
 
 desc test:check "Should run other task by result"
 task test:check {
-  status "Checking 'not-found' directory resulting fail"
-  run sleep 2
-  if ! test -d not-found; then
-    run ls tests
-  fi
+  start "Checking 'not-found' directory resulting fail"
+    sleep 2
+    if ! test -d not-found; then
+      ls tests
+    fi
+  end
 }
-
-#desc test-file "Test file operations"
-#task test-file {
-#  file not-found
-#  file README.mkd && {
-#    run markdown README.mkd -o README.html
-#  }
-#}
 
 desc test:all "Run all tests"
 task test:all {
-  test:hello
-  test:status
-  test:check
+  invoke test:hello
+  invoke test:status
+  invoke test:check
 }
 
 default test:all

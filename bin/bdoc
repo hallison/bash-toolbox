@@ -1,94 +1,132 @@
 #!/usr/bin/env bash-toolbox
-#$ bash-toolbox v${VERSION_TAG} ${VERSION_DATE} - bdoc
+#$ @{version} - bdoc
 #$
 #$ Build Markdown documentation from source file comments.
 #$
 #$ Usage:
-#$   bdoc [OPTIONS] [FILE] [<OUTPUT>]
+#$   bdoc [OPTIONS] [FILES]
 #$   bdoc [OPTIONS]
 #$
 #$ Options:
-#$   -u,--usage       Show usage message.
-#$   -m,--markdown    Show documentation.
-#$   -h,--help        Show this message.
-#$   -v,--version     Show version.
+#$   -u    Show usage message.
+#$   -m    Show documentation.
+#$   -h    Show this message.
+#$   -v    Show version.
 #$
 
-#: bdoc(1) -- Bash-Toolbox Documentation
-#: =====================================
-#:
-#: ## SYNOPSIS
-#:
-#: `bdoc` [OPTIONS] [FILE] [<OUTPUT>] ...  
-#: `bdoc` [OPTIONS] ...  
-#:
-#: ## DESCRIPTION
-#:
-#: Build Markdown documentation from source file comments.
-#:
-#: ## AUTHOR
-#:
-#: Written by Hallison Batista &lt;hallison@codigorama.com&gt;
-#:
-#: ## COPYRIGHT
-#:
-#: Copyright (C) 2009, 2010 Codigorama &lt;opensource@codigorama.com&gt;
-#:
-#: Permission is hereby granted, free of charge, to any person obtaining a
-#: copy of this software and associated documentation files (the "Software"),
-#: to deal in the Software without restriction, including without limitation
-#: the rights to use, copy, modify, merge, publish, distribute, sublicense,
-#: and/or sell copies of the Software, and to permit persons to whom the
-#: Software is furnished to do so, subject to the following conditions:
-#:
-#: The above copyright notice and this permission notice shall be included in
-#: all copies or substantial portions of the Software.
-#:
-#: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#: IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#: FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-#: THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#: LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-#: FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-#: DEALINGS IN THE SOFTWARE.
-#:
-#: ## SEE ALSO
-#:
-#: [bash-toolbox(1)](bash-toolbox.1.html), [content(3)](content.3.html),
-#: [bake(1)](bake.1.html), [bcmd(1)](bcmd.1.html),
-#:
+#@ bdoc(1) -- Bash-Toolbox Documentation
+#@ =====================================
+#@
+#@ ## SYNOPSIS
+#@
+#@ `bdoc` [OPTIONS] [FILE] [<OUTPUT>] ...  
+#@ `bdoc` [OPTIONS] ...  
+#@
+#@ ## DESCRIPTION
+#@
+#@ Build Markdown documentation from source file comments.
+#@
+#@ ## AUTHOR
+#@
+#@ Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#@
+#@ ## COPYRIGHT
+#@
+#@ Copyright (C) 2009, 2010, 2011 Codigorama &lt;opensource@codigorama.com&gt;
+#@
+#@ Permission is hereby granted, free of charge, to any person obtaining a
+#@ copy of this software and associated documentation files (the "Software"),
+#@ to deal in the Software without restriction, including without limitation
+#@ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#@ and/or sell copies of the Software, and to permit persons to whom the
+#@ Software is furnished to do so, subject to the following conditions:
+#@
+#@ The above copyright notice and this permission notice shall be included in
+#@ all copies or substantial portions of the Software.
+#@
+#@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+#@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#@ DEALINGS IN THE SOFTWARE.
+#@
+#@ ## SEE ALSO
+#@
+#@ [bash-toolbox(1)](bash-toolbox.1.html), [content(3)](content.3.html),
+#@ [bake(1)](bake.1.html), [bcmd(1)](bcmd.1.html),
+#@
 
 # Timestamp: 2010-01-11 13:11:39 -04:00
 
 source content.sh
 
-function parse {
-  declare output=${1%.*}.md
+function extract {
+  : ${1:?${FUNCNAME} requires source file}
+  comments --markdown "${1}"
+}
 
-  test -n "${2}" && output="${2}"
+function manual {
+  : ${1:?${FUNCNAME} requires title}
+  : ${2:?${FUNCNAME} requires application name}
+  : ${3:?${FUNCNAME} requires destination file}
 
-  comments --markdown ${1} >> ${output}
-
-  echo "$(readfile ${output})"
+  if command -v ronn &> /dev/null; then
+    ronn -br5 --manual="${1}" --organization="${2}" "${3}"
+  else
+    fail "ronn command is required"
+    return 1
+  fi
 }
 
 function bdoc {
-  test ${#} -eq 0 && {
-    usage
-    return 0
-  }
+  : ${1:?${FUNCNAME} requires an argument}
 
-  case ${1} in
-    -u|--usage    ) comments --usage ${2} ;;
-    -m|--markdown ) parse ${2} ${3} ;;
-    -h|--help     ) usage && return 0 ;;
-    -v|--version  ) usage && return 0 ;;
-    -* ) fail "invalid option '${option}', try '-h' for help."; return 1 ;;
-  esac
+  declare -a formats=()
+
+  while getopts ":hvum" option; do
+    case ${option} in
+      u)  # Parse comments to usage message from source
+          formats=("${formats[@]}" usage)
+      ;;
+      m)  # Parse comments to markdown from source
+          formats=("${formats[@]}" markdown)
+      ;;
+      h)  # Usage
+          usage
+          return ${?}
+      ;;
+      v)  # Version
+          echo "${BASH_TOOLBOX_VERSION} - ${BASH_SOURCE##*/}"
+          return 0
+      ;;
+      :)  # Require arguments
+          fail "argument is required"
+          return 1
+      ;;
+      *)  # Invalid option
+          fail "invalid option '${option}', try '-h' for help."
+          return 1
+      ;;
+    esac
+  done
+
+  shift $((OPTIND - 1))
+
+  : ${1:?${FUNCNAME} requires a source file}
+
+  for file in ${@}; do
+    for format in ${formats[@]}; do
+      comments --${format} "${file}"
+    done
+  done
 
   return 0
 }
 
 bdoc ${@}
+
+exit ${?}
 
 # vim: filetype=sh

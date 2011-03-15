@@ -6,7 +6,7 @@ task manifest {
 
   for file in ${GLOB[@]}; do
     test -f ${MANIFEST} && run rm ${MANIFEST}
-    status "Creating ${file}"
+    start "Creating ${file}"
       test -f ${file} && echo ${file} >> ${MANIFEST}
     end
   done
