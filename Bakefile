@@ -117,7 +117,7 @@ task build {
   cp ${BASH_SOURCE} ${BUILDPATH}
 }
 
-desc package "Create package files (tar.gz, tar.bz2 and zip)"
+desc package "Create package files ${PKGNAME}.tar.gz"
 task package {
   message --info "Setting packages"
 

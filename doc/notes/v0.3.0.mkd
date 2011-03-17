@@ -1,0 +1,41 @@
+Bash-Toolbox v0.3.0
+===================
+
+* Improvements
+
+  * Added new tasks to build all sources.
+
+  * New documentation format and improvements in code.
+
+    * Added new manual format that must be extracted from the comments of
+      source, delimited by section number.
+    * Documentation of the sources have been updated.
+    * Improvements in the `bake` application.
+    * The command `bdoc` has been updated for the new format of documentation.
+
+  * Many improvements in all source of project.
+
+    * The tree of directories has been restructured.
+    * Added a new delimiter of comments for the source documentation.
+    * The status.sh implements the `start..end` as a virtual command block.
+
+  * Tasks for packaging and small fixes.
+
+  * CLI libraries have been updated.
+
+    * The commands `status` and `run` have been removed from `bake` CLI library.
+    * Small improvements in sources.
+
+  * Updates in `Bakefile`.
+
+    * Changes in the tasks for configuration all sources.
+    * The new features of libraries of the status and messages have been added
+      in all tasks.
+
+  * Updates in the code documentation.
+
+    * Added new manual documentation format that must be extracted from the
+      comments of source.
+
+For more information about this project, please visit the repository hosted on
+Github <http://github.com/codigorama/bash-toolbox>.
