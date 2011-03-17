@@ -2,136 +2,182 @@ source version.bk
 
 load ${VERSION_FILE}
 
-PREFIX=${PREFIX:-/usr/local}
-PROJECT=${DIRSTACK##*/}
-PACKAGE=${PROJECT}-${VERSION[0]}
-SOURCE=src/${PACKAGE}
+WORKDIR=${PWD##*/}
+BUILDPATH=build
+PKGPATH=pkg
+PKGNAME=${WORKDIR}-${VERSION[0]}
+PKGDIR=${PKGPATH}/${PKGNAME}
 GLOB=($(git ls-files))
+STDOUT=${TMP}/bash-toolbox.dev.log
 
-task base {
-  # Global constants
-  BASH_TOOLBOX_PATH="${PREFIX}"
-  BASH_TOOLBOX_LIB="${BASH_TOOLBOX_PATH}/lib/bash-toolbox"
-  BASH_TOOLBOX_CLI="${BASH_TOOLBOX_LIB}/cli"
-  BASH_TOOLBOX_SHARE="${BASH_TOOLBOX_PATH}/share/bash-toolbox"
-  BASH_TOOLBOX_LOG="/tmp/bash-toolbox.log"
-
-  return 0
-}
-
-desc config "Configure Bash-Toolbox for installation in ${PREFIX}"
+desc config "Configure Bash-Toolbox for installation in ${prefix:=/usr/local}" "
+    Set the variables:
+      prefix="${prefix}"
+      bindir="${bindir:=${prefix}/bin}"
+      libdir="${libdir:=${prefix}/lib/bash-toolbox}"
+      libexecdir="${libexecdir:=${prefix}/libexec/bash-toolbox}"
+      localstatedir="${localstatedir:=${prefix}/var}"
+      sysconfdir="${sysconfdir:=${prefix}/etc}"
+      datarootdir="${datarootdir:=${prefix}/share}"
+      datadir="${datadir:=${datarootdir}/bash-toolbox}"
+      mandir="${mandir:=${datarootdir}/man}"
+      docdir="${docdir:=${datarootdir}/doc/bash-toolbox}"
+"
 task config {
-  invoke base
+  message --info "Configuring project"
 
-  message --info "Setting directories and files"
+  start "Setting variables"
+    prefix="${prefix}"
+    bindir="${bindir}"
+    libdir="${libdir}"
+    libexecdir="${libexecdir}"
+    localstatedir="${localstatedir}"
+    sysconfdir="${sysconfdir}"
+    datarootdir="${datarootdir}"
+    datadir="${datadir}"
+    mandir="${mandir}"
+    docdir="${docdir}"
+  end
 
-  local glob=(${GLOB[@]//Bakefile})
-
-  for i in ${!glob[@]}; do
-    local regexp=""
-    local source="${SOURCE}/${glob[i]}"
-    status "Configuring ${source}"
-      mkdir -p ${source%/*}
-
-      regexp="${regexp};s/\${PREFIX.*}/${PREFIX//\//\\/}/g"
-      regexp="${regexp};s/\${BASH_TOOLBOX_PATH.*}/${BASH_TOOLBOX_PATH//\//\\/}/g"
-      regexp="${regexp};s/\${BASH_TOOLBOX_LIB.*}/${BASH_TOOLBOX_LIB//\//\\/}/g"
-      regexp="${regexp};s/\${BASH_TOOLBOX_CLI.*}/${BASH_TOOLBOX_CLI//\//\\/}/g"
-      regexp="${regexp};s/\${BASH_TOOLBOX_SHARE.*}/${BASH_TOOLBOX_SHARE//\//\\/}/g"
-      regexp="${regexp};s/\${BASH_TOOLBOX_LOG.*}/${BASH_TOOLBOX_LOG//\//\\/}/g"
-
-      regexp="${regexp};s/\${VERSION_TAG}/${VERSION[0]//\//\\/}/g"
-      regexp="${regexp};s/\${VERSION_DATE}/${VERSION[1]//\//\\/}/g"
-
-      sed -u "${regexp}" ${glob[i]} > ${source}
-    end
-  done
-
-  return 0
+  start "Creating config file"
+    rm config &> ${NULL}
+    echo "prefix=\"${prefix}\""               >> config
+    echo "bindir=\"${bindir}\""               >> config
+    echo "libdir=\"${libdir}\""               >> config
+    echo "libexecdir=\"${libexecdir}\""       >> config
+    echo "localstatedir=\"${localstatedir}\"" >> config
+    echo "sysconfdir=\"${sysconfdir}\""       >> config
+    echo "datarootdir=\"${datarootdir}\""     >> config
+    echo "datadir=\"${datadir}\""             >> config
+    echo "mandir=\"${mandir}\""               >> config
+    echo "docdir=\"${docdir}\""               >> config
+    #echo "binaries=(${binaries[@]})"   >> config
+    #echo "libraries=(${libraries[@]})" >> config
+    #echo "resources=(${resources[@]})" >> config
+    #echo "documents=(${documents[@]})" >> config
+    #echo "manuals=(${manuals[@]})"     >> config
+    #echo "shared=(${shared[@]})"       >> config
+    #echo "extras=(${extras[@]})"       >> config
+  end
 }
 
-desc package "Create package file (tar.gz and zip)"
-task package {
+desc build "Build directories and source files"
+task build {
   invoke config
 
-  message --info "Create packages"
-  cd src &> /dev/null
+  message --info "Building sources"
 
-  status "Packaging ${PACKAGE}.tar.gz"
-    tar -czvf "${PACKAGE}.tar.gz" ${PACKAGE}
+  declare regexp=""
+
+  start "Setting regular expressions for parsing"
+    regexp="${regexp};"'s/\"\${_prefix.*}\"/\"'${prefix//\//\\/}'\"/g'
+    regexp="${regexp};"'s/\"\${_bindir.*}\"/\"'${bindir//\//\\/}'\"/g'
+    regexp="${regexp};"'s/\"\${_libdir.*}\"/\"'${libdir//\//\\/}'\"/g'
+    regexp="${regexp};"'s/\"\${_libexecdir.*}\"/\"'${libexecdir//\//\\/}'\"/g'
+    regexp="${regexp};"'s/\"\${_localstatedir.*}\"/\"'${localstatedir//\//\\/}'\"/g'
+    regexp="${regexp};"'s/\"\${_sysconfdir.*}\"/\"'${sysconfdir//\//\\/}'\"/g'
+    regexp="${regexp};"'s/\"\${_datarootdir.*}\"/\"'${datarootdir//\//\\/}'\"/g'
+    regexp="${regexp};"'s/\"\${_datadir.*}\"/\"'${datadir//\//\\/}'\"/g'
+    regexp="${regexp};"'s/\"\${_mandir.*}\"/\"'${mandir//\//\\/}'\"/g'
+    regexp="${regexp};"'s/\"\${_docdir.*}\"/\"'${docdir//\//\\/}'\"/g'
   end
 
-  status "Packaging ${PACKAGE}.zip"
-    zip -r ${PACKAGE}.zip ${PACKAGE}
+  start "Setting documentation labels"
+    # Versioning
+    regexp="${regexp};"'s/\"\${version.*}\"/\"Bash-Toolbox v'"${VERSION[0]} ${VERSION[1]} (${VERSION[2]})"'\"/g'
+    regexp="${regexp};"'s/@{version}/Bash-Toolbox v'"${VERSION[0]} ${VERSION[1]} (${VERSION[2]})"'/g'
   end
 
-  cd ..
+  start "Building directories and files"
+    for i in ${!GLOB[@]}; do
+      declare source
+
+      case "${GLOB[i]}" in
+        bin/*   ) source="${BUILDPATH}/${bindir}/${GLOB[i]#*/}" ;;
+        lib/*   ) source="${BUILDPATH}/${libdir}/${GLOB[i]#*/}" ;;
+        etc/*   ) source="${BUILDPATH}/${sysconfdir}/${GLOB[i]#*/}" ;;
+        doc/*   ) source="${BUILDPATH}/${docdir}/${GLOB[i]#*/}" ;;
+        #man/*   ) source="${BUILDPATH}/${mandir}/${GLOB[i]#*/}" ;;
+        tasks/* ) source="${BUILDPATH}/${datadir}/${GLOB[i]}" ;;
+        test/*  ) source="${BUILDPATH}/${datadir}/${GLOB[i]}" ;;
+        *       ) source="${BUILDPATH}/${docdir}/${GLOB[i]}" ;;
+      esac
+      mkdir -p "${source%/*}"
+      sed -u "${regexp}" < "${GLOB[i]}" > "${source}"
+
+      if [[ -x ${GLOB[i]} ]]; then
+        chmod 755 "${source}"
+      fi
+
+      GLOB[i]=${source}
+    done
+  end
+
+  # This file must not changed
+  cp ${BASH_SOURCE} ${BUILDPATH}
 }
 
-desc install "Install Bash-Toolbox in ${PREFIX}"
+desc package "Create package files (tar.gz, tar.bz2 and zip)"
+task package {
+  message --info "Setting packages"
+
+  declare pkgfile="${PKGDIR}.tar.gz"
+
+  start "Creating structure"
+    git archive --prefix=${PKGDIR}/ v${VERSION[0]} | tar xf -
+  end
+
+  start "Packaging ${pkgfile}"
+    tar czvf "${pkgfile}" "${PKGDIR}"
+  end
+}
+
+desc install "Install Bash-Toolbox in prefix=${prefix}"
 task install {
-  declare -a sources=()
-  declare -a directories=()
+  invoke build
 
-  status "Copying libraries"
-  for lib in lib/* lib/*/* lib/*/*/*; do
-    test -d ${lib} && {
-      install -d ${PREFIX}/${lib}
-      directories=(\${PREFIX}/${lib} ${directories[@]})
-    }
-    test -f ${lib} && {
-      install ${lib} ${PREFIX}/${lib}
-      sources=(${sources[@]} \${PREFIX}/${lib})
-    }
-  done
+  declare -a installed=()
 
-  status "Copying shared files"
-  for src in share/* share/*/* share/*/*/*; do
-    test -f ${src} && {
-      install ${src} ${PREFIX}/${src}
-      sources=(\${PREFIX}/${src} ${sources[@]})
-    }
-    test -d ${src} && {
-      install -d ${PREFIX}/${src}
-      directories=(\${PREFIX}/${src} ${directories[@]})
-    }
+  for i in ${!GLOB[@]}; do
+    declare    source="${GLOB[i]#${BUILDPATH}/}"
+    start "Installing ${source}"
+      command install -pdv "${source%/*}"
+      command install -pv "${GLOB[i]}" "${source}"
+      installed=("${installed[@]}" "${source}")
+    end
   done
-
-  status "Copying shared files"
-  for src in share/* share/*/* share/*/*/*; do
-    test -f ${src} && {
-      install ${src} ${PREFIX}/${src}
-      sources=(\${PREFIX}/${src} ${sources[@]})
-    }
-    test -d ${src} && {
-      install -d ${PREFIX}/${src}
-      directories=(\${PREFIX}/${src} ${directories[@]})
-    }
-  done
-
-  status "Copying binaries"
-  install -d ${PREFIX}/bin
-  for bin in bin/*; do
-    install ${bin} ${PREFIX}/${bin}
-    sources=(${sources[@]} \${PREFIX}/${bin})
-  done
-  echo "declare    PREFIX=${PREFIX}" > .uninstall
-  echo "declare -a sources=(${sources[@]})" >> .uninstall
-  echo "declare -a directories=(${directories[@]})" >> .uninstall
+  echo "installed=(${installed[@]})" >> config
 }
 
 desc uninstall "Uninstall Bash-Toolbox"
 task uninstall {
-  source .uninstall
-  status "Removing all files"
-  for src in ${sources[@]}; do
-    test -f ${src} && rm ${src}
-  done
+  if test -f config; then
+    message --info "Uninstalling Bash-Toolbox"
 
-  status "Removing empty directories"
-  for dir in ${directories[@]}; do
-    rmdir ${dir}
-  done
+    source config
+
+    declare -a directories=()
+
+    for file in ${installed[@]}; do
+      if test -f ${file}; then
+        start "Removing file ${file}"
+          rm ${file}
+          directories=(${directories[@]} "${file%/*}")
+        end
+      fi
+    done
+
+    for dir in ${directories[@]}; do
+      if test -d ${dir}; then
+        start "Removing directory ${dir}"
+          rm -rv ${dir}
+        end
+      fi
+    done
+  else
+    fail "config file not found"
+    return 1
+  fi
 }
 
 desc reinstall "Reinstall Bash-Toolbox"
