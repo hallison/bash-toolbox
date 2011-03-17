@@ -10,53 +10,61 @@
 #$ Options:
 #$   -u    Show usage message.
 #$   -m    Show documentation.
+#$   -1    Show manual page, section 1.
+#$   -2    Show manual page, section 2.
+#$   -3    Show manual page, section 3.
+#$   -4    Show manual page, section 4.
+#$   -5    Show manual page, section 5.
+#$   -6    Show manual page, section 6.
+#$   -7    Show manual page, section 7.
+#$   -8    Show manual page, section 8.
 #$   -h    Show this message.
 #$   -v    Show version.
 #$
 
-#@ bdoc(1) -- Bash-Toolbox Documentation
-#@ =====================================
-#@
-#@ ## SYNOPSIS
-#@
-#@ `bdoc` [OPTIONS] [FILE] [<OUTPUT>] ...  
-#@ `bdoc` [OPTIONS] ...  
-#@
-#@ ## DESCRIPTION
-#@
-#@ Build Markdown documentation from source file comments.
-#@
-#@ ## AUTHOR
-#@
-#@ Written by Hallison Batista &lt;hallison@codigorama.com&gt;
-#@
-#@ ## COPYRIGHT
-#@
-#@ Copyright (C) 2009, 2010, 2011 Codigorama &lt;opensource@codigorama.com&gt;
-#@
-#@ Permission is hereby granted, free of charge, to any person obtaining a
-#@ copy of this software and associated documentation files (the "Software"),
-#@ to deal in the Software without restriction, including without limitation
-#@ the rights to use, copy, modify, merge, publish, distribute, sublicense,
-#@ and/or sell copies of the Software, and to permit persons to whom the
-#@ Software is furnished to do so, subject to the following conditions:
-#@
-#@ The above copyright notice and this permission notice shall be included in
-#@ all copies or substantial portions of the Software.
-#@
-#@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-#@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-#@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-#@ DEALINGS IN THE SOFTWARE.
-#@
-#@ ## SEE ALSO
-#@
-#@ [bash-toolbox(1)](bash-toolbox.1.html), [content(3)](content.3.html),
-#@ [bake(1)](bake.1.html), [bcmd(1)](bcmd.1.html),
-#@
+#1 bdoc(1) -- Bash-Toolbox Documentation
+#1 =====================================
+#1
+#1 ## SYNOPSIS
+#1
+#1 `bdoc` [OPTIONS] [FILE] [<OUTPUT>] ...  
+#1 `bdoc` [OPTIONS] ...  
+#1
+#1 ## DESCRIPTION
+#1
+#1 Build Markdown documentation from source file comments.
+#1
+#1 ## AUTHOR
+#1
+#1 Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#1
+#1 ## COPYRIGHT
+#1
+#1 Copyright (C) 2009, 2010, 2011 Codigorama &lt;opensource@codigorama.com&gt;
+#1
+#1 Permission is hereby granted, free of charge, to any person obtaining a
+#1 copy of this software and associated documentation files (the "Software"),
+#1 to deal in the Software without restriction, including without limitation
+#1 the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#1 and/or sell copies of the Software, and to permit persons to whom the
+#1 Software is furnished to do so, subject to the following conditions:
+#1
+#1 The above copyright notice and this permission notice shall be included in
+#1 all copies or substantial portions of the Software.
+#1
+#1 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#1 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#1 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+#1 THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#1 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#1 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#1 DEALINGS IN THE SOFTWARE.
+#1
+#1 ## SEE ALSO
+#1
+#1 [bash-toolbox(1)](bash-toolbox.1.html), [content(3)](content.3.html),
+#1 [bake(1)](bake.1.html), [bcmd(1)](bcmd.1.html),
+#1
 
 # Timestamp: 2010-01-11 13:11:39 -04:00
 
@@ -81,33 +89,43 @@ function manual {
 }
 
 function bdoc {
-  : ${1:?${FUNCNAME} requires an argument}
+  test ${#} -eq 0 && usage && return 0
 
   declare -a formats=()
 
-  while getopts ":hvum" option; do
+  while getopts ":hvum12345678" option; do
     case ${option} in
-      u)  # Parse comments to usage message from source
-          formats=("${formats[@]}" usage)
+      # Parse comments to usage message from source
+      u)
+        formats=("${formats[@]}" usage)
       ;;
-      m)  # Parse comments to markdown from source
-          formats=("${formats[@]}" markdown)
+      # Parse comments to markdown from source
+      m)
+        formats=("${formats[@]}" markdown)
       ;;
-      h)  # Usage
-          usage
-          return ${?}
+      # Parse comments to markdown from source
+      [1-8])
+        formats=("${formats[@]}" man${option})
       ;;
-      v)  # Version
-          echo "${BASH_TOOLBOX_VERSION} - ${BASH_SOURCE##*/}"
-          return 0
+      # Usage
+      h)
+        usage
+        return ${?}
       ;;
-      :)  # Require arguments
-          fail "argument is required"
-          return 1
+      # Version
+      v)
+        echo "${BASH_TOOLBOX_VERSION} - ${BASH_SOURCE##*/}"
+        return 0
       ;;
-      *)  # Invalid option
-          fail "invalid option '${option}', try '-h' for help."
-          return 1
+      # Require arguments
+      :)
+        fail "argument is required"
+        return 1
+      ;;
+      # Invalid option
+      *)
+        fail "invalid option '${option}', try '-h' for help."
+        return 1
       ;;
     esac
   done

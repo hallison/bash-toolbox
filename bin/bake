@@ -16,74 +16,183 @@
 #$   -v    Display version.
 #$
 
-#@ man: bake.1 {
-#@ bake(1) -- Bash-Toolbox Make
-#@ ============================
-#@
-#@ ## SYNOPSIS
-#@
-#@ `bake` [-f] [TASK_FILE] [TASK_NAME] ...  
-#@ `bake` [TASK_NAME] ...  
-#@ `bake` [OPTIONS] ...  
-#@
-#@ ## DESCRIPTION
-#@
-#@ A lightweight build automation like GNU/Make and Rake. It is a Syntactic
-#@ sugar based which use Bash.
-#@
-#@ This script application should be used to handle tasks defined
-#@ `Bakefile` or `bakefile`.
-#@
-#@ ## OPTIONS
-#@
-#@ * `-f`:
-#@   Load task file instead the default Bakefile.
-#@
-#@ * `-l`:
-#@   List task descriptions. Use this option when you need remember the task
-#@   name and goal.
-#@
-#@ * `-n`:
-#@    List task names.
-#@
-#@ * `-h`:
-#@   Display this message.
-#@
-#@ * `-v`:
-#@   Display version.
-#@
-#@ ## AUTHOR
-#@
-#@ Written by Hallison Batista &lt;hallison@codigorama.com&gt;
-#@
-#@ ## COPYRIGHT
-#@
-#@ Copyright (C) 2009, 2010, 2011 Codigorama &lt;opensource@codigorama.com&gt;
-#@
-#@ Permission is hereby granted, free of charge, to any person obtaining a
-#@ copy of this software and associated documentation files (the "Software"),
-#@ to deal in the Software without restriction, including without limitation
-#@ the rights to use, copy, modify, merge, publish, distribute, sublicense,
-#@ and/or sell copies of the Software, and to permit persons to whom the
-#@ Software is furnished to do so, subject to the following conditions:
-#@ 
-#@ The above copyright notice and this permission notice shall be included in
-#@ all copies or substantial portions of the Software.
-#@ 
-#@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-#@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-#@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-#@ DEALINGS IN THE SOFTWARE.
-#@
-#@ ## SEE ALSO
-#@
-#@ [bash-toolbox(1)](bash-toolbox.1.html), [bake(3)](bake.3.html),
-#@ [bakefile(5)](bakefile.5.html), [bcmd(1)](bcmd.1.html)
-#@
-#@ }
+#1 bake(1) -- Bash-Toolbox Make
+#1 ============================
+#1
+#1 ## SYNOPSIS
+#1
+#1 `bake` [-f] [TASK_FILE] [TASK_NAME] ...  
+#1 `bake` [TASK_NAME] ...  
+#1 `bake` [OPTIONS] ...  
+#1
+#1 ## DESCRIPTION
+#1
+#1 A lightweight build automation like GNU/Make and Rake. It is a Syntactic
+#1 sugar based which use Bash.
+#1
+#1 This script application should be used to handle tasks defined
+#1 `Bakefile` or `bakefile`.
+#1
+#1 ## OPTIONS
+#1
+#1 * `-f`:
+#1   Load task file instead the default Bakefile.
+#1
+#1 * `-l`:
+#1   List task descriptions. Use this option when you need remember the task
+#1   name and goal.
+#1
+#1 * `-n`:
+#1    List task names.
+#1
+#1 * `-h`:
+#1   Display this message.
+#1
+#1 * `-v`:
+#1   Display version.
+#1
+#1 ## AUTHOR
+#1
+#1 Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#1
+#1 ## COPYRIGHT
+#1
+#1 Copyright (C) 2009, 2010, 2011 Codigorama &lt;opensource@codigorama.com&gt;
+#1
+#1 Permission is hereby granted, free of charge, to any person obtaining a
+#1 copy of this software and associated documentation files (the "Software"),
+#1 to deal in the Software without restriction, including without limitation
+#1 the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#1 and/or sell copies of the Software, and to permit persons to whom the
+#1 Software is furnished to do so, subject to the following conditions:
+#1
+#1 The above copyright notice and this permission notice shall be included in
+#1 all copies or substantial portions of the Software.
+#1
+#1 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#1 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#1 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+#1 THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#1 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#1 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#1 DEALINGS IN THE SOFTWARE.
+#1
+#1 ## SEE ALSO
+#1
+#1 [bash-toolbox(1)](bash-toolbox.1.html), [bake(3)](bake.3.html),
+#1 [bakefile(5)](bakefile.5.html), [bcmd(1)](bcmd.1.html)
+#1
+
+#5 file=bakefile.5
+#5 bakefile(5) -- Bash-Toolbox Make file
+#5 =====================================
+#5
+#5 ## DESCRIPTION
+#5
+#5 The `Bakefile` is a set of tasks that will be load and invoke by `bake`
+#5 command.
+#5
+#5 ## TASKS
+#5
+#5 ### DESCRIBED TASKS
+#5
+#5 Task is a function that is inside the stack tasks. The tasks that will be used
+#5 in command line must be describe using the function `desc`
+#5
+#5 You define a new task using the following methods:
+#5
+#5 * Describe a new task with name and description using the command `desc`. The
+#5   `desc` command will push the information to the stack of tasks. Then it
+#5   necessary write the defined task..
+#5 * Define the new task using the command `task` like a function.
+#5
+#5 Example:
+#5
+#5     desc <task-name> <task-description>  
+#5     task <task-name> {  
+#5       # ... task-body  
+#5     }  
+#5
+#5 You can sign all the tasks and their descriptions and then write them.
+#5
+#5     # Description block
+#5     desc <task1> <description1>
+#5     desc <task2> <description2>
+#5     desc <task3> <description3>
+#5     desc <task4> <description4>
+#5
+#5     task <task1> {
+#5       # ... task1
+#5     }
+#5
+#5     task <task2> {
+#5       # ... task2
+#5     }
+#5
+#5     task <task3> {
+#5       # ... task3
+#5     }
+#5
+#5     task <task4> {
+#5       # ... task4
+#5     }
+#5
+#5 ### ANONYMOUS TASKS
+#5
+#5 When you do not describe a task, then, it is anonymous and your scope is
+#5 only internal, that is, it can not invoked by `bake` externally. This is
+#5 useful when you want write a task only invoked by others tasks. Example:
+#5
+#5     desc install "Install the application"
+#5     task install {
+#5       build # invoking build task
+#5       # ... install
+#5     }
+#5
+#5     # anonymous build
+#5     task build {
+#5       # ... build
+#5     }
+#5
+#5 ### NAMESPACED TASKS
+#5
+#5 You can define a task with namespace.
+#5
+#5     desc tar:gz "Create/update tarball package and compress using gzip"
+#5     task tar:gz {
+#5       # ... create tar.gz
+#5     }
+#5
+#5 In this case, when a namespaced task is invoked, first check if namespace is
+#5 defined as task inside the stack. If defined, then will be invoked first.
+#5 Otherwise, the task is executed.
+#5
+#5     desc tar "Create/update tarball package"
+#5     task tar {
+#5       # ... create tar file or define variables
+#5     }
+#5
+#5     desc tar:gz "Compress tarball using gzip"
+#5     task tar:gz {
+#5       # ... create tar.gz
+#5     }
+#5
+#5     desc tar:bz2 "Compress tarball using bzip2"
+#5     task tar:bz2 {
+#5       # ... create tar.bz2
+#5     }
+#5
+#5 Before invoke "tar:gz" or "tar:bz2" the namespace task "tar" will be invoked
+#5 first.
+#5
+#5 ## AUTHORS
+#5
+#5 This manual page was written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#5
+#5 ## SEE ALSO
+#5
+#5 [bake(1)](bake.1.html), [bake(3)](bake.3.html), [bcmd(1)](bcmd.1.html)
+#5
 
 # Timestamp: 2010-01-08 17:59:17 -04:00
 
@@ -92,6 +201,10 @@ include "${BASH_TOOLBOX_LIB}/cli"
 source bake.sh
 source content.sh
 source status.sh
+
+function has_task_file {
+  return $(test -f ${task_file})
+}
 
 # List all task names and descriptions.
 function list_all {
@@ -133,14 +246,12 @@ function invoke_all {
   done
   return 0
 }
+
 # Main function.
 function bake {
-  if [[ -z "${task_file}" ]]; then
-    fail $"task file not found"
-    return 1
+  if has_task_file; then
+    source ${task_file}
   fi
-
-  source ${task_file}
 
   while getopts ":f:lnhvd" option; do
     case ${option} in

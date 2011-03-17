@@ -13,75 +13,109 @@
 #$   -v    Display version.
 #$
 
-#@ bcmd(1) -- Bash-Toolbox Command Convert
-#@ =======================================
-#@
-#@ ## SYNOPSIS
-#@
-#@ `bcmd` [FILE] [CMD_INDEX] ...  
-#@ `bcmd` [FILE] [OPTIONS] ...  
-#@
-#@ ## DESCRIPTION
-#@
-#@ `bcmd` handle command lists defined in a file and run.
-#@
-#@ Example of the  contents:
-#@
-#@     = Build homepage and documentation
-#@
-#@       : Creating homepage and documentation directories
-#@         + mkdir -p homepage/doc/api
-#@
-#@       : Building API
-#@         + markdown doc/api.mkd -o homepage/doc/api/index.html
-#@
-#@       : Building documentation
-#@         + markdown README.mkd -o homepage/index.html
-#@         + markdown doc/faq.mkd -o homepage/doc/faq.html
-#@         + markdown doc/howto.mkd -o homepage/doc/howto.html
-#@
-#@ ## OPTIONS
-#@
-#@ * `-t`:
-#@   List table of content of the command titles.
-#@
-#@ * `-h`:
-#@   Display this message.
-#@
-#@ * `-v`:
-#@   Display version.
-#@
-#@ ## AUTHOR
-#@
-#@ Written by Hallison Batista &lt;hallison@codigorama.com&gt;
-#@
-#@ ## COPYRIGHT
-#@
-#@ Copyright (C) 2009, 2010, 2011 Codigorama &lt;opensource@codigorama.com&gt;
-#@
-#@ Permission is hereby granted, free of charge, to any person obtaining a
-#@ copy of this software and associated documentation files (the "Software"),
-#@ to deal in the Software without restriction, including without limitation
-#@ the rights to use, copy, modify, merge, publish, distribute, sublicense,
-#@ and/or sell copies of the Software, and to permit persons to whom the
-#@ Software is furnished to do so, subject to the following conditions:
-#@ 
-#@ The above copyright notice and this permission notice shall be included in
-#@ all copies or substantial portions of the Software.
-#@ 
-#@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-#@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-#@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-#@ DEALINGS IN THE SOFTWARE.
-#@
-#@ ## SEE ALSO
-#@
-#@ [bash-toolbox(1)](bash-toolbox.1.html), [bcmd(3)](bcmd.3.html),
-#@ [bcmd(5)](bcmd.5.html), [bake(1)](bake.1.html)
-#@
+#1 bcmd(1) -- Bash-Toolbox Command Convert
+#1 =======================================
+#1
+#1 ## SYNOPSIS
+#1
+#1 `bcmd` [FILE] [CMD_INDEX] ...  
+#1 `bcmd` [FILE] [OPTIONS] ...  
+#1
+#1 ## DESCRIPTION
+#1
+#1 `bcmd` handle command lists defined in a file and run.
+#1
+#1 ## OPTIONS
+#1
+#1 * `-t`:
+#1   List table of content of the command titles.
+#1
+#1 * `-h`:
+#1   Display this message.
+#1
+#1 * `-v`:
+#1   Display version.
+#1
+#1 ## AUTHOR
+#1
+#1 Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#1
+#1 ## COPYRIGHT
+#1
+#1 Copyright (C) 2009, 2010, 2011 Codigorama &lt;opensource@codigorama.com&gt;
+#1
+#1 Permission is hereby granted, free of charge, to any person obtaining a
+#1 copy of this software and associated documentation files (the "Software"),
+#1 to deal in the Software without restriction, including without limitation
+#1 the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#1 and/or sell copies of the Software, and to permit persons to whom the
+#1 Software is furnished to do so, subject to the following conditions:
+#1 
+#1 The above copyright notice and this permission notice shall be included in
+#1 all copies or substantial portions of the Software.
+#1 
+#1 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#1 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#1 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+#1 THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#1 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#1 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#1 DEALINGS IN THE SOFTWARE.
+#1
+#1 ## SEE ALSO
+#1
+#1 [bash-toolbox(1)](bash-toolbox.1.html), [bcmd(3)](bcmd.3.html),
+#1 [bcmd(5)](bcmd.5.html), [bake(1)](bake.1.html)
+#1
+
+#5 bcmd(5) -- Bash-Toolbox Command Convert
+#5 =======================================
+#5
+#5 ## DESCRIPTION
+#5
+#5 `bcmd` handle command lists defined in a file and run.
+#5
+#5 ## SYNTAX
+#5
+#5 The `bcmd` syntax is very simple and easy.
+#5
+#5 * `=`:
+#5
+#5   Define a title.
+#5
+#5 * `-`:
+#5
+#5   Define a subtitle that will be used as status message when list of the
+#5   commands is runned.
+#5
+#5 * `+`:
+#5
+#5   Add a command line that will interpreted by `bcmd`. That is, the command
+#5   line will be runned in stack of the commands.
+#5
+#5 Example of the usage a `bcmd` file contents:
+#5
+#5     = Build homepage and documentation
+#5
+#5       - Create homepage and documentation directories
+#5         + mkdir -p homepage/doc/api
+#5
+#5       - Build API
+#5         + markdown doc/api.mkd -o homepage/doc/api/index.html
+#5
+#5       - Build documentation
+#5         + markdown README.mkd -o homepage/index.html
+#5         + markdown doc/faq.mkd -o homepage/doc/faq.html
+#5         + markdown doc/howto.mkd -o homepage/doc/howto.html
+#5
+#5 ## SEE ALSO
+#5
+#5 [bcmd(1)](bcmd.1.html), [bcmd(3)](bcmd.3.html), [bake(1)](bake.1.html)
+#5
+#5 ## AUTHORS
+#5
+#5 This manual page was written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#5
 
 # Timestamp: 2010-01-08 17:59:17 -04:00
 

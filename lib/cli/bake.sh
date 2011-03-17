@@ -1,52 +1,52 @@
 
-#@ bake(3) -- Bash-Toolbox Make
-#@ ============================
-#@
-#@ ## SYNOPSIS
-#@
-#@ `#!/usr/bin/env bash-toolbox`
-#@
-#@ `include ${BASH_TOOLBOX_CLI}`
-#@
-#@ `source bake.sh`
-#@
-#@ ## DESCRIPTION
-#@
-#@ This script should be used as library in source script file or into
-#@ Bash sessions. The goal is implements a lightweight interface to create
-#@ a task and build manager with syntax suggar.
-#@
-#@ ## AUTHOR
-#@
-#@ Written by Hallison Batista &lt;hallison@codigorama.com$gt;
-#@
-#@ ## COPYRIGHT
-#@
-#@ Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
-#@
-#@ Permission is hereby granted, free of charge, to any person obtaining a copy
-#@ of this software and associated documentation files (the "Software"), to deal
-#@ in the Software without restriction, including without limitation the rights
-#@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#@ copies of the Software, and to permit persons to whom the Software is
-#@ furnished to do so, subject to the following conditions:
-#@ 
-#@ The above copyright notice and this permission notice shall be included in
-#@ all copies or substantial portions of the Software.
-#@ 
-#@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#@ THE SOFTWARE.
-#@
-#@ ## SEE ALSO
-#@
-#@ [bash-toolbox(1)](bash-toolbox.1.html), [bake(1)](bake.1.html),
-#@ [bakefile(5)](bakefile.5.html)
-#@
+#3 bake(3) -- Bash-Toolbox Make
+#3 ============================
+#3
+#3 ## SYNOPSIS
+#3
+#3 `#!/usr/bin/env bash-toolbox`
+#3
+#3 `include ${BASH_TOOLBOX_LIB}/cli`
+#3
+#3 `source bake.sh`
+#3
+#3 ## DESCRIPTION
+#3
+#3 This script should be used as library in source script file or into
+#3 Bash sessions. The goal is implements a lightweight interface to create
+#3 a task and build manager with syntax suggar.
+#3
+#3 ## AUTHOR
+#3
+#3 Written by Hallison Batista &lt;hallison@codigorama.com$gt;
+#3
+#3 ## COPYRIGHT
+#3
+#3 Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+#3
+#3 Permission is hereby granted, free of charge, to any person obtaining a copy
+#3 of this software and associated documentation files (the "Software"), to deal
+#3 in the Software without restriction, including without limitation the rights
+#3 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#3 copies of the Software, and to permit persons to whom the Software is
+#3 furnished to do so, subject to the following conditions:
+#3
+#3 The above copyright notice and this permission notice shall be included in
+#3 all copies or substantial portions of the Software.
+#3
+#3 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#3 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#3 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#3 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#3 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#3 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#3 THE SOFTWARE.
+#3
+#3 ## SEE ALSO
+#3
+#3 [bash-toolbox(1)](bash-toolbox.1.html), [bake(1)](bake.1.html),
+#3 [bakefile(5)](bakefile.5.html)
+#3
 
 # Timestamp: 2010-01-11 17:40:25 -04:00
 

@@ -1,9 +1,10 @@
-.uninstall
+config
 .*.sw[p-z]
 *.html
 *.tag
 *.tar*
 *.tmp
-src/*
+build/*
+pkg/*
 tmp/*
 

@@ -1,46 +1,46 @@
 
-#@ base(3) -- Bash-Toolbox Base Functions
-#@ ======================================e
-#@                                        
-#@ ## SYNOPSIS                            
-#@                                        
-#@ \#!/usr/bin/env bash-toolbox
-#@
-#@ ## DESCRIPTION
-#@
-#@ This script should be used as library in source script file or into
-#@ Bash sessions. The goal is implements the base of Bash-Toolbox projects.
-#@
-#@ ## AUTHOR
-#@
-#@ Written by Hallison Batista &lt;hallison@codigorama.com&gt;
-#@
-#@ ## COPYRIGHT
-#@
-#@ Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
-#@
-#@ Permission is hereby granted, free of charge, to any person obtaining a copy
-#@ of this software and associated documentation files (the "Software"), to deal
-#@ in the Software without restriction, including without limitation the rights
-#@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#@ copies of the Software, and to permit persons to whom the Software is
-#@ furnished to do so, subject to the following conditions:
-#@ 
-#@ The above copyright notice and this permission notice shall be included in
-#@ all copies or substantial portions of the Software.
-#@ 
-#@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#@ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#@ THE SOFTWARE.
-#@
-#@ ## SEE ALSO
-#@
-#@ [bash-toolbox(1)](bash-toolbox.1.html)
-#@
+#3 base(3) -- Bash-Toolbox Base Functions
+#3 ======================================
+#3
+#3 ## SYNOPSIS
+#3
+#3 \#!/usr/bin/env bash-toolbox
+#3
+#3 ## DESCRIPTION
+#3
+#3 This script should be used as library in source script file or into
+#3 Bash sessions. The goal is implements the base of Bash-Toolbox projects.
+#3
+#3 ## AUTHOR
+#3
+#3 Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#3
+#3 ## COPYRIGHT
+#3
+#3 Copyright (C) 2009,2010 Codigorama &lt;code@codigorama.com&gt;
+#3
+#3 Permission is hereby granted, free of charge, to any person obtaining a copy
+#3 of this software and associated documentation files (the "Software"), to deal
+#3 in the Software without restriction, including without limitation the rights
+#3 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#3 copies of the Software, and to permit persons to whom the Software is
+#3 furnished to do so, subject to the following conditions:
+#3
+#3 The above copyright notice and this permission notice shall be included in
+#3 all copies or substantial portions of the Software.
+#3
+#3 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#3 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#3 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#3 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#3 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#3 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#3 THE SOFTWARE.
+#3
+#3 ## SEE ALSO
+#3
+#3 [bash-toolbox(1)](bash-toolbox.1.html)
+#3
 
 # Timestamp: 2010-01-08 17:59:17 -04:00
 
@@ -101,6 +101,53 @@ function trace {
   done
 }
 alias trace='trace "${BASH_SOURCE[*]}" "${FUNCNAME[*]}" "${BASH_LINENO[*]}"'
+
+function getvars {
+  : ${1:?${FUNCNAME} requires variable names}
+
+  declare -a varnames=()
+
+  while test ${#} -gt 0; do
+    if [[ "${1}" == [a-z][A-Z]*=* ]]; then
+      declare varname="${1%%=*}"
+      if eval "${varname}='${1#*=}'" &> /dev/null ; then
+        varnames=("${varnames[@]//${varname}}" "${varname}")
+      else
+        fail "invalid variable name '${varname}'"
+      fi
+    fi
+    shift 1
+  done
+
+  echo "${varnames[@]}"
+
+  return 0
+}
+
+function argvar {
+  : ${1:?${FUNCNAME} requires argument to declare variable}
+
+  declare varname="${1%%=*}"
+          varname="${varname##--}"
+
+  eval "${varname//-/_}=${1##*=}"
+}
+
+function getargs {
+  : ${1:?${FUNCNAME} requires argument names}
+
+  declare -a argnames=(${1//:/\n})
+
+  shift 1
+
+  while test ${#} -gt 0; do
+    for i in ${!argnames[@]}; do
+      if [[ "--${argnames[i]}" == "${1}" ]]; then
+        eval "${argnames[i]}=\"${1##*=}\""
+      fi
+    done
+  done
+}
 
 # vim: filetype=sh
 
