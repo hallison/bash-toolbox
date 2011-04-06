@@ -69,7 +69,7 @@ function start {
 
   exec 3>&1
   exec 2>&1
-  exec &>>"${STDOUT}"
+  exec &>>"${stdout}"
 }
 
 function end {

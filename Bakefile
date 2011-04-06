@@ -4,11 +4,9 @@ load ${VERSION_FILE}
 
 WORKDIR=${PWD##*/}
 BUILDPATH=build
-PKGPATH=pkg
-PKGNAME=${WORKDIR}-${VERSION[0]}
-PKGDIR=${PKGPATH}/${PKGNAME}
 GLOB=($(git ls-files))
-STDOUT=${TMP}/bash-toolbox.dev.log
+
+stdout=${TMP}/bash-toolbox.dev.log
 
 desc config "Configure Bash-Toolbox for installation in ${prefix:=/usr/local}" "
     Set the variables:

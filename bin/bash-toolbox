@@ -118,10 +118,10 @@
 
 shopt -s sourcepath
 
-: ${NULL:=/dev/null}
-: ${STDIN:=/dev/stdin}
-: ${STDOUT:=/dev/stdout}
-: ${STDERR:=/dev/stderr}
+: ${null:=/dev/null}
+: ${stdin:=/dev/stdin}
+: ${stdout:=/dev/stdout}
+: ${stderr:=/dev/stderr}
 
 # Bash-Toolbox constants
 BASH_TOOLBOX_VERSION="${version:-Bash-Toolbox v0.0.0 ($(date +%F)) Development}"
@@ -150,6 +150,10 @@ else
   echo "BASH_TOOLBOX_ETC=$BASH_TOOLBOX_ETC"
   echo "BASH_TOOLBOX_LIB=$BASH_TOOLBOX_LIB"
   echo "BASH_TOOLBOX_SHARE=$BASH_TOOLBOX_SHARE"
+  echo "null=${null}"
+  echo "stdin=${stdin}"
+  echo "stdout=${stdout}"
+  echo "stderr=${stderr}"
   echo "PATH=${PATH}"
   exit 0
 fi

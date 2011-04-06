@@ -3,9 +3,9 @@ source status.sh
 
 #shopt -u restricted_shell
 
-STDOUT="${BASH_TOOLBOX_PATH}/status.tmp"
+stdout="${BASH_TOOLBOX_PATH}/status.tmp"
 
-rm "${STDOUT}"
+rm "${stdout}"
 
 message -i "Testing redirections"
 
@@ -16,7 +16,7 @@ start "Testing file descriptor redirection"
   done
 end
 
-result=($(readfile ${STDOUT}))
+result=($(readfile ${stdout}))
 
 assert_equal "0 1 2 3 4 5 6 7 8 9" "${result[*]}"
 
