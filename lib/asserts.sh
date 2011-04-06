@@ -1,7 +1,7 @@
 
 function assert_variable {
   printf "%s: " $"Asserting variable '\${${1}}'"
-  declare ${1} &> /dev/null && echo "ok" || echo "fail"
+  declare -p ${1} &> /dev/null && echo "ok" || echo "fail"
 }
 
 function assert_equal {
