@@ -1,55 +1,53 @@
 # date:year:month:month_name:day:weekday
 
-declare -a DATE_FIELDS=(
-  date%F
+DATE_FIELDS=(
   year%Y
   month%m
-  month.name%B
+  month_name%B
   day%d
   weekday%A
 )
 
-declare -a DATE_SKEL="
-  function @date {
-    if [[ \${1} -ne 0 ]]; then
-      @date=(date.at \"\${1} \${2:-days}\")
-    fi
-    echo \${@date[0]}
-  }
-  function @date.reload { @date=(date.at \"@value\"); }
-  function @date.printf {
-    local format="\${1}"; shift
-    printf \"\$(date --date \${@date[0]} +\"\${format}\")\"
-  }
+DATE_SKEL="
+@date=(\$(date_at @value))
 
-"
-
-function date.at {
-  date --date "${1}" +"${DATE_FIELDS[*]//*%/%}"
+function @date {
+  if [[ \${1} != 0 ]]; then
+    @date=(\$(date_at \"\${1} \${2}\"))
+$(for i in ${!DATE_FIELDS[@]}; do
+    echo -n "    "
+    echo "@date_${DATE_FIELDS[i]//%*}=\"\${@date[$((i+1))]}\""
+  done)
+  else
+    echo \${@date}
+  fi
 }
 
-function date.new {
+function @date_reload {
+  @date \"@value\"
+}
+
+function @date_printf {
+  printf \"\$(date_at \"\${@date}\" \"\${1}\")\"
+}
+
+@date_reload
+"
+
+function date_at {
+  command date --date "${1}" +"${2:-%F ${DATE_FIELDS[*]//*%/%}}"
+}
+
+function date {
   : ${1:?${FUNCNAME} requires a declaration <variable>=<value>}
   : variable: ${input[0]}, value: ${input[1]}
-  while [[ ${#} -gt 0 ]]; do
-    declare -a input=(${1//=/ })
+  for attribution in ${@}; do
+    declare -a input=(${attribution//=/ })
     declare    skel=""
-    eval "${input[0]}=($(date.at ${input[1]}))"
     skel="${DATE_SKEL//@date/${input[0]}}"
     skel="${skel//@value/${input[1]}}"
     eval "${skel}"
-    for i in ${!DATE_FIELDS[@]}; do
-      : skel: @date.${DATE_FIELDS[i]//%*}
-      skel="
-        function ${input[0]}.${DATE_FIELDS[i]//%*} {
-          echo \${${input[0]}[$i]};
-        }"
-      echo "${skel}" >> out.tmp
-      eval "${skel}"
-    done
-    shift 1
   done
 }
-
 
 ## vim: filetype=sh
