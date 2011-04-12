@@ -1,0 +1,166 @@
+#!/bin/bash
+#$ @{version} - printfx
+#$
+#$ Format with extensions and print data.
+#$
+#$ Usage:
+#$   printfx [FORMAT] [ARGUMENTS]...
+#$   printfx [OPTION]
+#$
+#$ Options:
+#$   -h    Display this message.
+#$   -v    Display version.
+#$
+
+#1 printfx(1) -- Format with extension modes and print data
+#1 ========================================================
+#1
+#1 ## SYNOPSIS
+#1   `printfx` [FORMAT] [ARGUMENTS]...  
+#1   `printfx` [OPTION]  
+#1
+#1 ## DESCRIPTION
+#1
+#1 A simple program that extend the `printf` **Bash** builtin and put
+#1 console modes as _bold_, _normal_, _terminal_, _underline_ and
+#1 _reverse_ (see [Modes][] bellow) and console colors: _dark/black_,
+#1 _red_, _green_, _yellow/brown_, _blue_, _purple_, _cyan_ and
+#1 _white/gray_ (see [Foreground and background colors][] bellow).
+#1
+#1 ## OPTIONS
+#1   * `-h`:
+#1      Display this message.
+#1
+#1   * `-v`:
+#1      Display version.
+#1
+#1 ## FORMATS
+#1
+#1 ### Modes
+#1
+#1 * `&o`:
+#1    Default, turn off.
+#1
+#1 * `&b`:
+#1    Bold
+#1
+#1 * `&n`:
+#1    Normal
+#1
+#1 * `&t`:
+#1    Terminal
+#1
+#1 * `&u`:
+#1    Underline
+#1
+#1 * `&r`:
+#1    Reverse
+#1
+#1 ### Foreground and background colors
+#1
+#1 * `#d`, `#D`:
+#1    Dark/black
+#1
+#1 * `#r`, `#R`:
+#1    Red
+#1
+#1 * `#g`, `#G`:
+#1    Green
+#1
+#1 * `#y`, `#Y`:
+#1    Yellow
+#1
+#1 * `#b`, `#B`:
+#1    Blue
+#1
+#1 * `#p`, `#P`:
+#1    Purple
+#1
+#1 * `#c`, `#C`:
+#1    Cyan
+#1
+#1 * `#w`, `#W`:
+#1    White/gray
+#1
+#1 ## AUTHOR
+#1
+#1 Written by Hallison Batista &lt;hallison@codigorama.com&gt;
+#1
+#1 ## COPYRIGHT
+#1
+#1 Copyright (C) 2009, 2010, 2011 Codigorama &lt;opensource@codigorama.com&gt;
+#1
+#1 Permission is hereby granted, free of charge, to any person obtaining a
+#1 copy of this software and associated documentation files (the "Software"),
+#1 to deal in the Software without restriction, including without limitation
+#1 the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#1 and/or sell copies of the Software, and to permit persons to whom the
+#1 Software is furnished to do so, subject to the following conditions:
+#1
+#1 The above copyright notice and this permission notice shall be included in
+#1 all copies or substantial portions of the Software.
+#1
+#1 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#1 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#1 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+#1 THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#1 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#1 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#1 DEALINGS IN THE SOFTWARE.
+#1
+#1 ## SEE ALSO
+#1
+#1 [bash-toolbox(1)](bash-toolbox.1.html), **printf**
+#1
+
+function printfx {
+  : ${1:?format or option}
+  case ${1} in
+    -h) # Usage
+        bdoc -u ${BASH_SOURCE}
+        return 0
+    ;;
+    -v) # Version
+        echo "@{version} - ${BASH_SOURCE##*/}"
+        return 0
+    ;;
+  esac
+  local format="${1}"; shift
+  local printf=$(command -vp printf)
+  local extensions=(
+    # Modes
+    [00]="&o" # default, turn off
+    [01]="&b" # bold
+    [02]="&n" # normal
+    [03]="&t" # terminal
+    [04]="&u" # underline
+    [07]="&r" # reverse
+    # Foregrounds
+    [30]="#d" # dark/black
+    [31]="#r" # red
+    [32]="#g" # green
+    [33]="#y" # yellow
+    [34]="#b" # blue
+    [35]="#p" # purple
+    [36]="#c" # cyan
+    [37]="#w" # white/gray
+    # Backgrounds
+    [40]="#D" # dark/black
+    [41]="#R" # red
+    [42]="#G" # green
+    [43]="#Y" # yellow
+    [44]="#B" # blue
+    [45]="#P" # purple
+    [46]="#C" # cyan
+    [47]="#W" # white/gray
+  )
+
+  for i in ${!extensions[@]}; do
+    format="${format//${extensions[i]}/\033[${i}m}"
+  done
+
+  ${printf} "${format}\033[0m" "${@}"
+}
+
+printfx "${@}"
+
