@@ -40,10 +40,10 @@ run:
 
 This will install all files using `/usr/local` as prefix in sources. If you
 want install in your local applications (e.g. `~/.local/`) just set
-environment variable `PREFIX`.
+environment variable `prefix`.
 
     PATH=$PWD/bin:$PATH
-    PREFIX=~/.local bake install
+    prefix=~/.local bake install
 
 The installation task will create `.uninstall` file that used by
 `uninstall` task. So, if you want uninstall Bash-Toolbox, just run:
